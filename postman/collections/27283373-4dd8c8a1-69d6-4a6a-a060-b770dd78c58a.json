@@ -11419,7 +11419,7 @@
 										"candle-adjustments"
 									]
 								},
-								"description": "Delete Candle Adjustments API allows you to delete the historical market data adjustment factors related to Corporate Actions at instrument level.\n\n#### Request Parameters\n\n| **Field** | **Type** | **Description** |\n| --- | --- | --- |\n| instrumentId | Stringfied number | Instrument ID to apply the cash distribution |\n| exDate | Stringfied Date | Optional  <br>  <br>Ex-date of the corporate action  <br>format YYYY-MM-DD  <br>  <br>If not exist, delete all adjustment factors of the instrument |\n\n#### **Response:**\n\nNo response body\n\n#### Error Codes\n\n| Code | Message |\n| --- | --- |\n| 1 | System is unavailable |\n| 10001 | Permission denied |\n| 100 | Missing or invalid parameter: \\[FieldName\\] |"
+								"description": "Delete Candle Adjustments API allows you to delete the historical market data adjustment factors related to Corporate Actions at instrument level.\n\n#### Request Parameters\n\n| **Field** | **Type** | **Description** |\n| --- | --- | --- |\n| instrumentId | Stringified number | Instrument ID to apply the cash distribution |\n| exDate | Stringified Date | Optional  <br>  <br>Ex-date of the corporate action  <br>format YYYY-MM-DD  <br>  <br>If not exist, delete all adjustment factors of the instrument |\n\n#### **Response:**\n\nNo response body\n\n#### Error Codes\n\n| Code | Message |\n| --- | --- |\n| 1 | System is unavailable |\n| 10001 | Permission denied |\n| 100 | Missing or invalid parameter: \\[FieldName\\] |"
 							},
 							"response": [
 								{
