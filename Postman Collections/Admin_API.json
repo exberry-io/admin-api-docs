@@ -2,7 +2,7 @@
 	"info": {
 		"_postman_id": "0169a60d-b782-4f92-96be-7224a2815bf7",
 		"name": "Exberry Admin API",
-		"description": "## General\n\nExberry Admin API allows to manage the exchange static data (instruments, trading calendars and more) as well as sending operational commands (EOD, halt trading and more).\n\nSandbox environment endpoint (`URL_ORIGIN`): `https://admin-api.uat.exberry-uat.io`\n\nGuidelines:\n\n- All numbers are stringified unless explicitly mentioned otherwise\n    \n- Optional fields should be omitted from request if not required\n    \n- System ignores any additional parameter that are sent on request body but was not specified in this document\n    \n\nThere is an option to enable the maker checker flow for selected actions. More information can be found [here](https://documenter.getpostman.com/view/6229811/TzCV3jcq#2e9785a1-914f-44f3-8992-95569e495bf5).\n\n---\n\n#### Error Handling\n\nError response contains the following fields:\n\n| Name | Description |\n| --- | --- |\n| code | Error code |\n| message | Error message |\n| data.requiredPermission `optional` | Name of missing permission for that action |\n\nError response sample:\n\n``` json\n{\n    \"code\": 10001,\n    \"message\": \"Permission denied\",\n    \"data\": {\n        \"requiredPermission\": \"Exchange/Instrument/create\"\n    }\n}\n\n ```\n\nIn case of wrong path, generic error will be returned:\n\n``` json\n{\n    \"message\": \"Route not found\",\n    \"code\": 1\n}\n\n ```\n\n#### Generic Error Codes\n\n| Code | Message |\n| --- | --- |\n| 1 | One of the below:  <br>\\- Timeout expired  <br>\\- Exchange is unavailable  <br>\\- Invalid JSON  <br>\\- Route not found  <br>\\- Maximum request size is 60kb |\n| 10000 | Invalid token |\n\nHTTP Error codes:\n\n400: When exceeding Maximum request size of 60KB  \n403: Authentication and authorization related errors  \n401: Invalid token error  \n503: System is not available  \n504: Timeout  \n500: Any other error\n\n---\n\n# API Changes\n\n## v1.55.0(2026-04-08)\n\n- Added the list of `applicablePriceBands`\n    \n\n## v1.54.0(2026-03-17)\n\n- Added `priceMultiplier` and `priceUnit` to the Instrument\n    \n- Fix typos on Accounts API\n    \n\n## v1.52.0(2026-02-02)\n\n- Added `dailyMinPriceAbsolute`, `dailyMaxPriceAbsolute`, `tickMinPriceAbsolute` and `tickMaxPriceAbsolute` to the Instrument\n    \n\n## v1.51.0(2025-12-23)\n\n- Added `thirdPartyLockedInMpIds` to the MP\n    \n- Added `settlementDate` and `periodCode` to the Instrument\n    \n- Changed behavior of `allegedTradeExpireTimePeriod`\n    \n\n## v1.50.0(2025-11-20)\n\n- Added \"News\" API to submit news message\n    \n- Added block account feature\n    \n    - Added `status` field to the `Account`\n        \n- Increase instrument description to supoport up tp 1500 chars\n    \n- Adding `metadata` as optional property to place order API\n    \n\n## v1.49.0(2025-11-06)\n\n- Added an optional functionality to calculate Tick Reference Price using Bid/Ask\n    \n    - Added `bidAskTickRefPrice` to the `Instrument`\n        \n- Added Set Tick Reference Price API - can be used to set the tickReferencePrice manually\n    \n- Documentation only - cancelOnDisconnect proeprty in apiKey was changed\n    \n\n## v1.48.0(2025-10-23)\n\n- Changed the behavior of replace order behavior\n    \n- Added Trade Adjustment feature\n    \n\n## v1.47.0(2025-09-25)\n\n- Added \"Trade Reversal\" as new `type` values to:\n    \n    - Trade Entry\n        \n    - Instrument.minQuantityTradeEntries\n        \n    - Instrument.tradingCutoffs\n        \n\n## v1.45.0(2025-08-26)\n\n- Changed the account id party definition to `party.role=24` and `party.source=P`\n    \n\n## v1.45.0(2025-06-26)\n\n- Added `longName` and `description` to the Market Participant\n    \n\n## v1.44.0(2025-06-11)\n\n- Changed `contractSize` field of the instrument to be optional for all catergories, with a precision upto 5 decimals and >0\n    \n    - If not defined, `contractSize` is treated as 1\n        \n- Added `contractSizeUnit` as an optional field to the instrument\n    \n- Added `description` as an optional field to the Account\n    \n\n## v1.43.0(2025-05-14)\n\n- Added Update API Key for MP and MP Groups with maker checker support\n    \n- Deprecated `allowedInstruments` and `blockedInstruments` from API Keys\n    \n- In Create/Update API Key, `cancelOnDisconnect` is mandatory when the API Key has `place_order` OR `submit_rfq_quotes` OR `create_trade_report` permissions, otherwise it is optional. API responses always return `cancelOnDisconnect` in the responses.\n    \n    - Before that, the system allowed setting `cancelOnDisconnect` only when an API Key has `place_order` permission (it was ignored in other cases).\n        \n\n## v1.42.0(2025-04-23)\n\n- Instrument Groups\n    \n    - Added Instrument Groups APIs\n        \n    - Added `groupIds` to the Instrument\n        \n    - Added supporting `instrumentGroupIds` to Trading Halt/Resume and CBRs\n        \n    - Added supporting `allowedInstrumentGroupIds` to the API Keys\n        \n    - Added maker checker `requestType`\n        \n- Removed: Temporary error (to version 1.41.0 only) added in Halt/Resume API to validate NA is not used for category related filter:\n    \n- Remove calendar.actionType property\n    \n- Under Maker Checker section:\n    \n    - Added 2 `requestType`: `CreateAPIKey` , `DeleteAPIKey`\n        \n    - API creation samples were removed keeping only sample that have meaningful value\n        \n    - Fix documentation on the maker checker fields in response\n        \n- Documentation only:\n    \n    - MP API:\n        \n        - \"status\" rather than \"Status\"\n            \n        - status can be only \"Blocked\" or empty\n            \n    - Update failure samples for apiKey actions\n        \n\n## v1.41.0(2025-03-11)\n\n- Added new `type` values to:\n    \n    - Trade Entry\n        \n    - Instrument.minQuantityTradeEntries\n        \n    - Instrument.tradingCutoffs\n        \n- Added `OPG` and `ATC` values for auction.allowedTimeInForces\n    \n- Allow to use Halt and Resume with filters, below error was removed:\n    \n    - `Filters are not allowed when Maker-Checker is enabled`\n        \n- Temporary error (to version 1.41.0 only) added in Halt/Resume API to validate NA is not used for category related filter:\n    \n    - `Filters with \"NA\" category are not allowed when Maker-Checker is enabled`\n        \n\n## v1.40.0(2025-02-19)\n\n- The system retains and returns the tick size tables in a sorted ascending order by price.\n    \n- marketStatus of the instruments with a startDate/stopDate, is kept in Closed until the startDate then change to Closed on the stopDate and and remain in Closed.\n    \n- Introduction update:\n    \n    - Error Handling to be without not used properties\n        \n    - Remove multiple exchanges\n        \n    - Remove Generic error 10100 (Permission denied for exchange \\[ExchangeID\\])\n        \n- Get Calendars: results are now under calendars object , totalCount field added (This was already introduced on v1.39)\n    \n- Get CBRs: totalCount field added\n    \n- Get TickSizes: totalCount field added\n    \n- Create API Key API (both for MP and MP Group):\n    \n    - Remove path property from error messages\n        \n    - Align error code to other entities (both application code as well as HTTP error code to 500)\n        \n- From now on it is allowed to update reference price after EOD\n    \n\n## v1.39.0(2025-01-09)\n\n- Added supporting Replace reserve orders\n    \n- Added supporting 00:00 for calendar marketClose time.\n    \n- Typo fix: remove parties object from Replace order- Fields\n    \n\n## v1.38.0(2024-12-24)\n\n- Adding new validation to the auction - 102 - The auction duration in \\[calendar\\] is shorter than the minimum allowed duration\n    \n- Added supporting ASCII (32 -126) characters for party.id and targetParty.id fields.\n    \n- Added Market to Limit orders to the Place Order & Replace Order\n    \n\n## v1.37.0(2024-12-03)\n\n- Removed validation from Create CBR- 104 - Implied orders are configured for \\[strategySymbol\\] and are not supported for this CBR type\n    \n- Added `legPriceBands` validation to `strategyType=STRIP2` Strip(Average Price)\n    \n- Added `impliedOrderTypes` `IN` and `OUT` to `strategyType=STRIP2` Strip(Average Price)\n    \n- Added supporting `applyCashDistribution` and `applySecurityDistribution` when there are active reserve orders\n    \n- Added a validation to reject Replace and Cancel Order On Behalf requests for implied orders\n    \n\n## v1.36.0(2024-11-12)\n\n- Added `strategyType=STRIP2` Strip(Average Price)\n    \n- Changed a `leg1ReferencePrice` validation. The field is mandatory only when `Category=K(Strategy)` AND `strategyType=SPREAD` and is optional when `Category=K(Strategy)` AND `strategyType!=SPREAD`\n    \n- Added new validation to create & update instrument - 105 - Legs and Strategy calendars must be the same\n    \n- Added new validation to trading halt & trading resume - 2004 - Filters are not allowed when Maker-Checker is enabled\n    \n- Removed auction functionality from Instrument\n    \n- Documented auction object validations in create calendar API\n    \n\n## v1.35.0(2024-10-21)\n\n- Added new fields and validations to \"Trading Halt\":\n    \n    - `scheduleResumeTime`\n        \n    - `scheduleResumeTimeInterval`\n        \n- Added new types of CBR:\n    \n    - MARKET_RATE_POTENTIAL_EXECUTION\n        \n    - DYNAMIC_MARKET_RATE_POTENTIAL_EXECUTION\n        \n    - As a result also added new validations to the create instrument & create calendar\n        \n- Added Reserve orders (iceberg and hidden) to the `Place Order`\n    \n- Documented missing error code on instrument actions: `100`\n    \n\n## v1.34.0(2024-09-25)\n\n- Adding new field to the set settlement price - `updateReferencePrice`\n    \n- Added `tradingCutoffs` for trade reporting\n    \n- Added Candle Adjustments API as part of the \"Corporate Actions\"\n    \n- The sorting in `get instruments` is now case-insensitive.\n    \n- Added new validation to `Archive Instrument`\n    \n\n## v1.33.0(2024-08-21)\n\n- Added \"Accounts API\" folder under \"MP API\"\n    \n    - Added accounts related actions to the maker checker `requestType`\n        \n- Added `accountId` to Create API Key\n    \n- Added new APIs to adjust active orders and current market data fields(not historical) in case of Corporate Actions\n    \n    - `/api/operations/corporate-actions/apply-cash-distribution`\n        \n    - `/api/operations/corporate-actions/apply-security-distribution`\n        \n- Support filter for `trading halt` and `trading resume` in the maker checker\n    \n- Adding new TIF to auction - IOC\n    \n- Adding new validation to `create calendar`\n    \n\n## v1.32.0(2024-08-07)\n\n- Changed the derivativeInstrumentCategory filter to filter only instruments that are active and that has an underlying instrument and is in this category, in:\n    \n    - Get Instruments\n        \n    - Trading Halt\n        \n    - Trading Resume\n        \n- Added Suffix & Prefix for Symbol & Description filters\n    \n- Added `cancelReason` to the\n    \n    - Cancel Order\n        \n    - Mass Cancel\n        \n\n## v1.31.0(2024-07-16)\n\n- Instruments API:\n    \n    - Change the status filter to be a list and rename it to statues.\n        \n    - Added a validation to prevent changing `quantityPrecision` & `pricePrecision` when active Alleged Trades exist.\n        \n    - Adding new filter and new values to filters in get instruments, halt and resume\n        \n        - product - new value\n            \n        - startDateFrom - new value\n            \n        - stopDateFrom - new value\n            \n        - derivativeInstrumentCategory - new filter\n            \n- tradingHalt and tradingResume\n    \n    - Same changes mentioned above on instrument filters\n        \n    - Adding new validation to the halt & resume - 201 - You can send up to 750 instruments per request\n        \n- Mass cancelation:\n    \n    - Added `AllegedTrade` to the `targetEntities`\n        \n    - Added `targetScope` to support cancellation across all instruments.\n        \n- Adding new generic validation - 1 - Maximum request size is 60kb\n    \n- Added cancellation of active Quotes and active Alleged Trades to the Cancel on Disconnect.\n    \n- Added cancellation of active RFQs, Quotes and Alleged Trades when MP is blocked.\n    \n\n## v1.30.0(2024-06-19)\n\n- Adding `targetEntities` to Mass cancel\n    \n- Adding optional fields to `get instruments` request to allow filtering\n    \n- Adding more optional fields to `Trading Halt` and `Trading Resume` requests\n    \n- Adding possibility for user to override the maker chaekcer flow - by super user with new permission\n    \n- Adding new API to Archive Instrument\n    \n    - This action can be cofigured to require make/ checker process\n        \n    - Adding new activityStatus to get instrument\n        \n- Adding new validations to instrument update :\n    \n    - Disabling an instrumentis not allowed when there are active/suspended orders or active RFQs/Quotes\n        \n    - Changing `quantityPrecision` & `pricePrecision` is not allowed when there are active/suspended orders or active RFQs/Quotes\n        \n- Removed the comment field in the mass cancel.\n    \n\n## v1.29.0(2024-04-23)\n\n- Adding new Equilibrium Price matching algortihm for auctions\n    \n- Adding the ability to configure `auctions.extensions`\n    \n\n## v1.28.0(2024-04-16)\n\n- Remove `marketStatus` and `tradingStatus` from the response of instrument API\n    \n- Added `legPriceBands` to the instrument\n    \n- Added new API- `place order`\n    \n- Added new API - `replace order`\n    \n\n## v1.27.0(2024-04-01)\n\n- Remove from the response `latestTimestamp` of makerchecker request\n    \n- Adding to the response `makerUserType` of makerchecker request\n    \n- Changed the error message returned when configured mandatory parties are not in the Trade Entry\n    \n- `tradingModels` field will always be included in the response of Create Update and Get Instrument\n    \n- Adding new value to the maker checker `requestType` - `CancelOrder`\n    \n- The `comment` in cancel order is now optional\n    \n\n## v1.26.0(2024-02-28)\n\n- Adding more requestTypes to the Maker Checker\n    \n- Added support for removing `tradingModels` from instruments.\n    \n- Added a validation to prevent the creation of strategies with strategy leg instruments.\n    \n- Adding new API to the Operations API `Cancel Order`\n    \n- Adding new field to thew CBR `rounding`\n    \n\n## v1.25.0 (2024-02-07)\n\n- Changed Update Instrument to allow changing the `stopDate` after the `startDate`\n    \n- Adding the Maker Checker section\n    \n\n## v1.24.0 (2024-01-17)\n\n- Changed `compId(String)` of `MP` to `compIds(String[])`\n    \n- Added `deliveryStartDate` and `deliveryEndDate` to the `Instrument`\n    \n\n## v1.23.0 (2023-12-26)\n\n- Bugfix to correct the error returned when updating quantity/price precision of a parent strategy instrument. Error before the fix:`Legs [price | quantity] precision must be equal to strategy price precision`, error after the fix: `[FieldName] can't be changed for strategy related instrument`\n    \n- Change the Underlying Instrument of O(Option), F(Futures) and K(Strategies) instruments to Optional.\n    \n- Adding new optional fields to the MP APIs to support Self-Trade Prevention.\n    \n\n## v1.21.0 (2023-11-20)\n\n- Adding sorting to Auction objects in calendar objects\n    \n- Adding a new validation to PricePrecision and QuantityPrecision of strategy instruments(to validate that the same precision exists between parent and leg instruments).\n    \n\n## 2023-10-03\n\n- Deprecate v1 Calendar and V1 Instrument\n    \n\n## 2023-09-19\n\n- Adding new list to the instrument API- **minQuantityTradeEntries**\n    \n- Adding new validation to the trade entry - 102 (to consider minQuantityTradeEntries)\n    \n\n## 2023-08-08\n\n- Adding targetParties to order mass cancel\n    \n- Adding the contractSize to the validation in create and update instrument\n    \n    - 101- Precision of \\[Fieldname\\] is greater than \\[quantityPrecision\\]\n        \n- Adding edge case to the CBR\n    \n\n## 2023-07-12\n\n- Adding the strike and coupon to the validations in create and update instrument\n    \n    - 101- Precision of \\[Fieldname\\] is greater than \\[quantityPrecision\\]\n        \n    - 101- \\[FieldName\\] must be less than or equal to maxLong/10^ fieldPrecision\n        \n\n## 2023-06-06\n\n- Auction changes:\n    \n    - Adding seconds to start time\n        \n    - New field- overrideReferencePrice\n        \n- CBR Additions:\n    \n    - New type of CBR that monitor market rate changes since the previous trade rate (last price).\n        \n    - New actionType: RESUME_AUCTION\n        \n- Adding new validation to the create TickSize\n    \n- Changing bonds paramters values\n    \n\n## 2023-04-23\n\n- Adding new APIs:\n    \n    - TickSize\n        \n    - CBR\n        \n\n## 2023-03-22\n\n- New subCategory - Bonds\n    \n    - New underlyingAssets\n        \n    - New optional fields in instruments\n        \n\n## 2023-02-13\n\n- Added available values for:\n    \n    - categoty\n        \n    - subCategory\n        \n    - underlyingAssets\n        \n\n## 2023-02-08\n\n- new API permission in MP and MP Group\n    \n- New Operations API allows to:\n    \n    - Trading Halt\n        \n    - Trading Resume\n        \n    - Mass cancel\n        \n\n## 2023-01-18\n\n- **IMPORTANT!** New response on MP Group\n    \n- MP name max length = 30\n    \n- In MP and MPGroup for name and compId fields will have ASCII (32 -126) chars only\n    \n\n## 2023-01-03\n\n- New field in auction- trigger\n    \n\n## 2022-12-06\n\n- New strategy- strips\n    \n- Cancel On Disconnect flag in apiKey\n    \n\n## 2022-11-21\n\n- Trade Entry- response tradeId\n    \n- Instrument symbol- allowed ^/= characters\n    \n- New optional fields in the instrument for spreads strategy\n    \n\n## 2022-10-30\n\n- New optional fields in instrument API\n    \n- Instrument API- quoteCurrency is now limited to 10 characters\n    \n- End of day trigger\n    \n- MP status (Active/ Blocked)\n    \n\n## 2022-10-03\n\n- New APIKeys permission-\n    \n\n**MP**\n\n**How it was-**\n\n- Market Data\n    \n- Trading\n    \n- Mass Cancel\n    \n- Drop Copy\n    \n- Reporting\n    \n\n**How it is now-**\n\n- Market Data group:\n    \n- Real Time Market Data\n    \n- Market Data Snapshot\n    \n- Trading group:\n    \n- Place Order\n    \n- Cancel Order\n    \n- Modify Order\n    \n- Replace Order\n    \n- Mass Cancel\n    \n- Drop Copy group:\n    \n- Execution Reports\n    \n- Mass Order Status\n    \n- Trades\n    \n- Reporting group:\n    \n- Orders History\n    \n- Trades History\n    \n\n**MP Group**\n\n**How it was-**\n\n- Market Data\n    \n- Drop Copy\n    \n- Reporting\n    \n\n**How it is now-**\n\n- Market Data group:\n    \n- Real Time Market Data\n    \n- Market Data Snapshot\n    \n- Drop Copy group:\n    \n- Execution Reports\n    \n- Mass Order Status\n    \n- Trades\n    \n- Reporting group:\n    \n- Orders History\n    \n- Trades History\n    \n\n## 2022-09-13\n\n- New Operations API allows to:\n    \n- Capture Trade entry\n    \n- Cancel Trade\n    \n- Set settlement prices\n    \n- Instrument object is now changed and now includes more optional fields\n    \n\n## 2022-08-31\n\n- New APIs:\n    \n- MPs API\n    \n- MP Groups API\n    \n\n## 2021-06-29\n\n- Instrument symbol can now contains .(dot) and -(hyphen)\n    \n- Calendar.tradingDays is now optional to allow auctions only trading schedule.\n    \n\n## April 2021\n\n- Initial version of API released.",
+		"description": "## General\n\nExberry Admin API allows to manage the exchange static data (instruments, trading calendars and more) as well as sending operational commands (EOD, halt trading and more).\n\nSandbox environment endpoint (`URL_ORIGIN`): `https://admin-api.uat.exberry-uat.io`\n\nGuidelines:\n\n- All numbers are stringified unless explicitly mentioned otherwise\n    \n- Optional fields should be omitted from request if not required\n    \n- System ignores any additional parameter that are sent on request body but was not specified in this document\n    \n\nThere is an option to enable the maker checker flow for selected actions. More information can be found [here](https://documenter.getpostman.com/view/6229811/TzCV3jcq#2e9785a1-914f-44f3-8992-95569e495bf5).\n\n---\n\n#### Error Handling\n\nError response contains the following fields:\n\n| Name | Description |\n| --- | --- |\n| code | Error code |\n| message | Error message |\n| data.requiredPermission `optional` | Name of missing permission for that action |\n\nError response sample:\n\n``` json\n{\n    \"code\": 10001,\n    \"message\": \"Permission denied\",\n    \"data\": {\n        \"requiredPermission\": \"Exchange/Instrument/create\"\n    }\n}\n\n ```\n\nIn case of wrong path, generic error will be returned:\n\n``` json\n{\n    \"message\": \"Route not found\",\n    \"code\": 1\n}\n\n ```\n\n#### Generic Error Codes\n\n| Code | Message |\n| --- | --- |\n| 1 | One of the below:  <br>\\- Timeout expired  <br>\\- Exchange is unavailable  <br>\\- Invalid JSON  <br>\\- Route not found  <br>\\- Maximum request size is 60kb |\n| 10000 | Invalid token |\n\nHTTP Error codes:\n\n400: When exceeding Maximum request size of 60KB  \n403: Authentication and authorization related errors  \n401: Invalid token error  \n503: System is not available  \n504: Timeout  \n500: Any other error\n\n---\n\n# API Changes\n\n## v1.56.0(2026-05-XX)\n\n- Added supporting Binary Event Contract instruments\n    \n- Added additional details to the price band validation error message on orders API\n    \n- Added `metadata` as optional property to replace order API (it was added on version 1.51)\n    \n- Fix typo on Set News sample\n    \n\n## v1.55.0(2026-04-08)\n\n- Added the list of `applicablePriceBands`\n    \n\n## v1.54.0(2026-03-17)\n\n- Added `priceMultiplier` and `priceUnit` to the Instrument\n    \n- Fix typos on Accounts API\n    \n\n## v1.52.0(2026-02-02)\n\n- Added `dailyMinPriceAbsolute`, `dailyMaxPriceAbsolute`, `tickMinPriceAbsolute` and `tickMaxPriceAbsolute` to the Instrument\n    \n\n## v1.51.0(2025-12-23)\n\n- Added `thirdPartyLockedInMpIds` to the MP\n    \n- Added `settlementDate` and `periodCode` to the Instrument\n    \n- Changed behavior of `allegedTradeExpireTimePeriod`\n    \n\n## v1.50.0(2025-11-20)\n\n- Added \"News\" API to submit news message\n    \n- Added block account feature\n    \n    - Added `status` field to the `Account`\n        \n- Increase instrument description to supoport up tp 1500 chars\n    \n- Adding `metadata` as optional property to place order API\n    \n\n## v1.49.0(2025-11-06)\n\n- Added an optional functionality to calculate Tick Reference Price using Bid/Ask\n    \n    - Added `bidAskTickRefPrice` to the `Instrument`\n        \n- Added Set Tick Reference Price API - can be used to set the tickReferencePrice manually\n    \n- Documentation only - cancelOnDisconnect proeprty in apiKey was changed\n    \n\n## v1.48.0(2025-10-23)\n\n- Changed the behavior of replace order behavior\n    \n- Added Trade Adjustment feature\n    \n\n## v1.47.0(2025-09-25)\n\n- Added \"Trade Reversal\" as new `type` values to:\n    \n    - Trade Entry\n        \n    - Instrument.minQuantityTradeEntries\n        \n    - Instrument.tradingCutoffs\n        \n\n## v1.45.0(2025-08-26)\n\n- Changed the account id party definition to `party.role=24` and `party.source=P`\n    \n\n## v1.45.0(2025-06-26)\n\n- Added `longName` and `description` to the Market Participant\n    \n\n## v1.44.0(2025-06-11)\n\n- Changed `contractSize` field of the instrument to be optional for all catergories, with a precision upto 5 decimals and >0\n    \n    - If not defined, `contractSize` is treated as 1\n        \n- Added `contractSizeUnit` as an optional field to the instrument\n    \n- Added `description` as an optional field to the Account\n    \n\n## v1.43.0(2025-05-14)\n\n- Added Update API Key for MP and MP Groups with maker checker support\n    \n- Deprecated `allowedInstruments` and `blockedInstruments` from API Keys\n    \n- In Create/Update API Key, `cancelOnDisconnect` is mandatory when the API Key has `place_order` OR `submit_rfq_quotes` OR `create_trade_report` permissions, otherwise it is optional. API responses always return `cancelOnDisconnect` in the responses.\n    \n    - Before that, the system allowed setting `cancelOnDisconnect` only when an API Key has `place_order` permission (it was ignored in other cases).\n        \n\n## v1.42.0(2025-04-23)\n\n- Instrument Groups\n    \n    - Added Instrument Groups APIs\n        \n    - Added `groupIds` to the Instrument\n        \n    - Added supporting `instrumentGroupIds` to Trading Halt/Resume and CBRs\n        \n    - Added supporting `allowedInstrumentGroupIds` to the API Keys\n        \n    - Added maker checker `requestType`\n        \n- Removed: Temporary error (to version 1.41.0 only) added in Halt/Resume API to validate NA is not used for category related filter:\n    \n- Remove calendar.actionType property\n    \n- Under Maker Checker section:\n    \n    - Added 2 `requestType`: `CreateAPIKey` , `DeleteAPIKey`\n        \n    - API creation samples were removed keeping only sample that have meaningful value\n        \n    - Fix documentation on the maker checker fields in response\n        \n- Documentation only:\n    \n    - MP API:\n        \n        - \"status\" rather than \"Status\"\n            \n        - status can be only \"Blocked\" or empty\n            \n    - Update failure samples for apiKey actions\n        \n\n## v1.41.0(2025-03-11)\n\n- Added new `type` values to:\n    \n    - Trade Entry\n        \n    - Instrument.minQuantityTradeEntries\n        \n    - Instrument.tradingCutoffs\n        \n- Added `OPG` and `ATC` values for auction.allowedTimeInForces\n    \n- Allow to use Halt and Resume with filters, below error was removed:\n    \n    - `Filters are not allowed when Maker-Checker is enabled`\n        \n- Temporary error (to version 1.41.0 only) added in Halt/Resume API to validate NA is not used for category related filter:\n    \n    - `Filters with \"NA\" category are not allowed when Maker-Checker is enabled`\n        \n\n## v1.40.0(2025-02-19)\n\n- The system retains and returns the tick size tables in a sorted ascending order by price.\n    \n- marketStatus of the instruments with a startDate/stopDate, is kept in Closed until the startDate then change to Closed on the stopDate and and remain in Closed.\n    \n- Introduction update:\n    \n    - Error Handling to be without not used properties\n        \n    - Remove multiple exchanges\n        \n    - Remove Generic error 10100 (Permission denied for exchange \\[ExchangeID\\])\n        \n- Get Calendars: results are now under calendars object , totalCount field added (This was already introduced on v1.39)\n    \n- Get CBRs: totalCount field added\n    \n- Get TickSizes: totalCount field added\n    \n- Create API Key API (both for MP and MP Group):\n    \n    - Remove path property from error messages\n        \n    - Align error code to other entities (both application code as well as HTTP error code to 500)\n        \n- From now on it is allowed to update reference price after EOD\n    \n\n## v1.39.0(2025-01-09)\n\n- Added supporting Replace reserve orders\n    \n- Added supporting 00:00 for calendar marketClose time.\n    \n- Typo fix: remove parties object from Replace order- Fields\n    \n\n## v1.38.0(2024-12-24)\n\n- Adding new validation to the auction - 102 - The auction duration in \\[calendar\\] is shorter than the minimum allowed duration\n    \n- Added supporting ASCII (32 -126) characters for party.id and targetParty.id fields.\n    \n- Added Market to Limit orders to the Place Order & Replace Order\n    \n\n## v1.37.0(2024-12-03)\n\n- Removed validation from Create CBR- 104 - Implied orders are configured for \\[strategySymbol\\] and are not supported for this CBR type\n    \n- Added `legPriceBands` validation to `strategyType=STRIP2` Strip(Average Price)\n    \n- Added `impliedOrderTypes` `IN` and `OUT` to `strategyType=STRIP2` Strip(Average Price)\n    \n- Added supporting `applyCashDistribution` and `applySecurityDistribution` when there are active reserve orders\n    \n- Added a validation to reject Replace and Cancel Order On Behalf requests for implied orders\n    \n\n## v1.36.0(2024-11-12)\n\n- Added `strategyType=STRIP2` Strip(Average Price)\n    \n- Changed a `leg1ReferencePrice` validation. The field is mandatory only when `Category=K(Strategy)` AND `strategyType=SPREAD` and is optional when `Category=K(Strategy)` AND `strategyType!=SPREAD`\n    \n- Added new validation to create & update instrument - 105 - Legs and Strategy calendars must be the same\n    \n- Added new validation to trading halt & trading resume - 2004 - Filters are not allowed when Maker-Checker is enabled\n    \n- Removed auction functionality from Instrument\n    \n- Documented auction object validations in create calendar API\n    \n\n## v1.35.0(2024-10-21)\n\n- Added new fields and validations to \"Trading Halt\":\n    \n    - `scheduleResumeTime`\n        \n    - `scheduleResumeTimeInterval`\n        \n- Added new types of CBR:\n    \n    - MARKET_RATE_POTENTIAL_EXECUTION\n        \n    - DYNAMIC_MARKET_RATE_POTENTIAL_EXECUTION\n        \n    - As a result also added new validations to the create instrument & create calendar\n        \n- Added Reserve orders (iceberg and hidden) to the `Place Order`\n    \n- Documented missing error code on instrument actions: `100`\n    \n\n## v1.34.0(2024-09-25)\n\n- Adding new field to the set settlement price - `updateReferencePrice`\n    \n- Added `tradingCutoffs` for trade reporting\n    \n- Added Candle Adjustments API as part of the \"Corporate Actions\"\n    \n- The sorting in `get instruments` is now case-insensitive.\n    \n- Added new validation to `Archive Instrument`\n    \n\n## v1.33.0(2024-08-21)\n\n- Added \"Accounts API\" folder under \"MP API\"\n    \n    - Added accounts related actions to the maker checker `requestType`\n        \n- Added `accountId` to Create API Key\n    \n- Added new APIs to adjust active orders and current market data fields(not historical) in case of Corporate Actions\n    \n    - `/api/operations/corporate-actions/apply-cash-distribution`\n        \n    - `/api/operations/corporate-actions/apply-security-distribution`\n        \n- Support filter for `trading halt` and `trading resume` in the maker checker\n    \n- Adding new TIF to auction - IOC\n    \n- Adding new validation to `create calendar`\n    \n\n## v1.32.0(2024-08-07)\n\n- Changed the derivativeInstrumentCategory filter to filter only instruments that are active and that has an underlying instrument and is in this category, in:\n    \n    - Get Instruments\n        \n    - Trading Halt\n        \n    - Trading Resume\n        \n- Added Suffix & Prefix for Symbol & Description filters\n    \n- Added `cancelReason` to the\n    \n    - Cancel Order\n        \n    - Mass Cancel\n        \n\n## v1.31.0(2024-07-16)\n\n- Instruments API:\n    \n    - Change the status filter to be a list and rename it to statues.\n        \n    - Added a validation to prevent changing `quantityPrecision` & `pricePrecision` when active Alleged Trades exist.\n        \n    - Adding new filter and new values to filters in get instruments, halt and resume\n        \n        - product - new value\n            \n        - startDateFrom - new value\n            \n        - stopDateFrom - new value\n            \n        - derivativeInstrumentCategory - new filter\n            \n- tradingHalt and tradingResume\n    \n    - Same changes mentioned above on instrument filters\n        \n    - Adding new validation to the halt & resume - 201 - You can send up to 750 instruments per request\n        \n- Mass cancelation:\n    \n    - Added `AllegedTrade` to the `targetEntities`\n        \n    - Added `targetScope` to support cancellation across all instruments.\n        \n- Adding new generic validation - 1 - Maximum request size is 60kb\n    \n- Added cancellation of active Quotes and active Alleged Trades to the Cancel on Disconnect.\n    \n- Added cancellation of active RFQs, Quotes and Alleged Trades when MP is blocked.\n    \n\n## v1.30.0(2024-06-19)\n\n- Adding `targetEntities` to Mass cancel\n    \n- Adding optional fields to `get instruments` request to allow filtering\n    \n- Adding more optional fields to `Trading Halt` and `Trading Resume` requests\n    \n- Adding possibility for user to override the maker chaekcer flow - by super user with new permission\n    \n- Adding new API to Archive Instrument\n    \n    - This action can be cofigured to require make/ checker process\n        \n    - Adding new activityStatus to get instrument\n        \n- Adding new validations to instrument update :\n    \n    - Disabling an instrumentis not allowed when there are active/suspended orders or active RFQs/Quotes\n        \n    - Changing `quantityPrecision` & `pricePrecision` is not allowed when there are active/suspended orders or active RFQs/Quotes\n        \n- Removed the comment field in the mass cancel.\n    \n\n## v1.29.0(2024-04-23)\n\n- Adding new Equilibrium Price matching algortihm for auctions\n    \n- Adding the ability to configure `auctions.extensions`\n    \n\n## v1.28.0(2024-04-16)\n\n- Remove `marketStatus` and `tradingStatus` from the response of instrument API\n    \n- Added `legPriceBands` to the instrument\n    \n- Added new API- `place order`\n    \n- Added new API - `replace order`\n    \n\n## v1.27.0(2024-04-01)\n\n- Remove from the response `latestTimestamp` of makerchecker request\n    \n- Adding to the response `makerUserType` of makerchecker request\n    \n- Changed the error message returned when configured mandatory parties are not in the Trade Entry\n    \n- `tradingModels` field will always be included in the response of Create Update and Get Instrument\n    \n- Adding new value to the maker checker `requestType` - `CancelOrder`\n    \n- The `comment` in cancel order is now optional\n    \n\n## v1.26.0(2024-02-28)\n\n- Adding more requestTypes to the Maker Checker\n    \n- Added support for removing `tradingModels` from instruments.\n    \n- Added a validation to prevent the creation of strategies with strategy leg instruments.\n    \n- Adding new API to the Operations API `Cancel Order`\n    \n- Adding new field to thew CBR `rounding`\n    \n\n## v1.25.0 (2024-02-07)\n\n- Changed Update Instrument to allow changing the `stopDate` after the `startDate`\n    \n- Adding the Maker Checker section\n    \n\n## v1.24.0 (2024-01-17)\n\n- Changed `compId(String)` of `MP` to `compIds(String[])`\n    \n- Added `deliveryStartDate` and `deliveryEndDate` to the `Instrument`\n    \n\n## v1.23.0 (2023-12-26)\n\n- Bugfix to correct the error returned when updating quantity/price precision of a parent strategy instrument. Error before the fix:`Legs [price | quantity] precision must be equal to strategy price precision`, error after the fix: `[FieldName] can't be changed for strategy related instrument`\n    \n- Change the Underlying Instrument of O(Option), F(Futures) and K(Strategies) instruments to Optional.\n    \n- Adding new optional fields to the MP APIs to support Self-Trade Prevention.\n    \n\n## v1.21.0 (2023-11-20)\n\n- Adding sorting to Auction objects in calendar objects\n    \n- Adding a new validation to PricePrecision and QuantityPrecision of strategy instruments(to validate that the same precision exists between parent and leg instruments).\n    \n\n## 2023-10-03\n\n- Deprecate v1 Calendar and V1 Instrument\n    \n\n## 2023-09-19\n\n- Adding new list to the instrument API- **minQuantityTradeEntries**\n    \n- Adding new validation to the trade entry - 102 (to consider minQuantityTradeEntries)\n    \n\n## 2023-08-08\n\n- Adding targetParties to order mass cancel\n    \n- Adding the contractSize to the validation in create and update instrument\n    \n    - 101- Precision of \\[Fieldname\\] is greater than \\[quantityPrecision\\]\n        \n- Adding edge case to the CBR\n    \n\n## 2023-07-12\n\n- Adding the strike and coupon to the validations in create and update instrument\n    \n    - 101- Precision of \\[Fieldname\\] is greater than \\[quantityPrecision\\]\n        \n    - 101- \\[FieldName\\] must be less than or equal to maxLong/10^ fieldPrecision\n        \n\n## 2023-06-06\n\n- Auction changes:\n    \n    - Adding seconds to start time\n        \n    - New field- overrideReferencePrice\n        \n- CBR Additions:\n    \n    - New type of CBR that monitor market rate changes since the previous trade rate (last price).\n        \n    - New actionType: RESUME_AUCTION\n        \n- Adding new validation to the create TickSize\n    \n- Changing bonds paramters values\n    \n\n## 2023-04-23\n\n- Adding new APIs:\n    \n    - TickSize\n        \n    - CBR\n        \n\n## 2023-03-22\n\n- New subCategory - Bonds\n    \n    - New underlyingAssets\n        \n    - New optional fields in instruments\n        \n\n## 2023-02-13\n\n- Added available values for:\n    \n    - categoty\n        \n    - subCategory\n        \n    - underlyingAssets\n        \n\n## 2023-02-08\n\n- new API permission in MP and MP Group\n    \n- New Operations API allows to:\n    \n    - Trading Halt\n        \n    - Trading Resume\n        \n    - Mass cancel\n        \n\n## 2023-01-18\n\n- **IMPORTANT!** New response on MP Group\n    \n- MP name max length = 30\n    \n- In MP and MPGroup for name and compId fields will have ASCII (32 -126) chars only\n    \n\n## 2023-01-03\n\n- New field in auction- trigger\n    \n\n## 2022-12-06\n\n- New strategy- strips\n    \n- Cancel On Disconnect flag in apiKey\n    \n\n## 2022-11-21\n\n- Trade Entry- response tradeId\n    \n- Instrument symbol- allowed ^/= characters\n    \n- New optional fields in the instrument for spreads strategy\n    \n\n## 2022-10-30\n\n- New optional fields in instrument API\n    \n- Instrument API- quoteCurrency is now limited to 10 characters\n    \n- End of day trigger\n    \n- MP status (Active/ Blocked)\n    \n\n## 2022-10-03\n\n- New APIKeys permission-\n    \n\n**MP**\n\n**How it was-**\n\n- Market Data\n    \n- Trading\n    \n- Mass Cancel\n    \n- Drop Copy\n    \n- Reporting\n    \n\n**How it is now-**\n\n- Market Data group:\n    \n- Real Time Market Data\n    \n- Market Data Snapshot\n    \n- Trading group:\n    \n- Place Order\n    \n- Cancel Order\n    \n- Modify Order\n    \n- Replace Order\n    \n- Mass Cancel\n    \n- Drop Copy group:\n    \n- Execution Reports\n    \n- Mass Order Status\n    \n- Trades\n    \n- Reporting group:\n    \n- Orders History\n    \n- Trades History\n    \n\n**MP Group**\n\n**How it was-**\n\n- Market Data\n    \n- Drop Copy\n    \n- Reporting\n    \n\n**How it is now-**\n\n- Market Data group:\n    \n- Real Time Market Data\n    \n- Market Data Snapshot\n    \n- Drop Copy group:\n    \n- Execution Reports\n    \n- Mass Order Status\n    \n- Trades\n    \n- Reporting group:\n    \n- Orders History\n    \n- Trades History\n    \n\n## 2022-09-13\n\n- New Operations API allows to:\n    \n- Capture Trade entry\n    \n- Cancel Trade\n    \n- Set settlement prices\n    \n- Instrument object is now changed and now includes more optional fields\n    \n\n## 2022-08-31\n\n- New APIs:\n    \n- MPs API\n    \n- MP Groups API\n    \n\n## 2021-06-29\n\n- Instrument symbol can now contains .(dot) and -(hyphen)\n    \n- Calendar.tradingDays is now optional to allow auctions only trading schedule.\n    \n\n## April 2021\n\n- Initial version of API released.",
 		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
 	},
 	"item": [
@@ -1680,7 +1680,7 @@
 				}
 			],
 			"id": "f11697b8-fc27-4c58-90d1-b15e73f47de3",
-			"description": "Instruments API allows you to:\n\n- Get single instrument details\n    \n- Get the list of all instruments with their details\n    \n- Create an instrument\n    \n- Update existing instruments\n    \n- Archive an instrument that is no longer in use\n    \n\nSamples for both mandatory fields only and all fields can be found in the `Get Instrument` section\n\n#### Instrument Object - Mandatory Fields\n\n| Field | Type | Description |\n| --- | --- | --- |\n| id | Int String | Instrument ID (Not part of request body in Create/ Update Instrument) |\n| symbol | String | Unique Symbol of the instrument. Max length - 16, contains \\[a-Z,0-9,-,.,^,=,/\\] |\n| quoteCurrency | String | Quote currency |\n| calendarId | Int String | Calendar ID |\n| pricePrecision | Int String | Allowed decimal places for price. Max value: 10 |\n| quantityPrecision | Int String | Allowed decimal places for quantity. Max value: 10 |\n| minQuantity | Decimal String | Min order size |\n| maxQuantity | Decimal String | Max order size |\n| activityStatus | String | ACTIVE: trading allowed  <br>DISABLED: Trading not allowed  <br>ARCHIVED: Can't be used in Create/ Update APIs but only in the Get APIs, for more details see [here](https://documenter.getpostman.com/view/6229811/TzCV3jcq#a4a29f01-55ed-47a9-85f7-5db4e8d0026f) |\n| description | String | Instrument Description |\n\n#### Instrument Object - Optional Fields\n\nOptional fields should be omitted from request if not required\n\n| Field | Type | Description |\n| --- | --- | --- |\n| maxDepth | Decimal String | Maximum allowed depth (for both buy and sell) for the instrument |\n| maxOrderValue | Decimal String | Maximum allowed order value for the instrument in quote currency terms |\n| maxPrice | Decimal String | Maximum allowed price for the instrument |\n| minPrice | Decimal String | Minimum allowed price for the instrument |\n| quantityIncrement | Decimal String | Order quantity must be multiplied by the quantity increment |\n| tickSizeTableId | Int String | Tick size table ID |\n| groupIds | \\[\\]Int String | Optional  <br>A list of group Ids. |\n| category | Char | Instrument  <br>A table of available values is listed below |\n| subCategory | Char | Instrument sub category  <br>A table of available values is listed below |\n| underlyingAssets | Char | Instrument underlying assets type  <br>A table of available values is listed below |\n| cfi | String (6 chars ) | CFI code |\n| mic | String (4 chars ) | MIC code |\n| startDate | Unix time (sec) | Mandatory if Category = O (option) OR F (Futures)  <br>Used for derivatives, trading is allowed from this time.  <br>  <br>Before this time, marketStatus is in Closed state without changing as per the calendar. |\n| stopDate | Unix time (sec) | Mandatory if Category = O (option) OR F (Futures)  <br>Used for derivatives, trading is allowed up to this time.  <br>At this time all active orders are being cancelled.  <br>See tradingCutoffs for instrument expiration details  <br>  <br>At this time marketStatus changes to Closed and remains in the same state without changing as per the calendar. |\n| **tradingCutoffs** | List | list of trading cutoffs for Trade Entry trade types |\n| \\>type | eNum | One of the below values:  <br>  <br>Refer Trade Entry/type field for the values; all values are supported. |\n| \\>timestamp | Unix time (sec) | Cutoff time for trade reporting of the type defined in the ‘type’ field.  <br>Instrument status changed to be Disabled at the latest cutoff. (considering also the stopDate)  <br>  <br>If not defined, stopDate will be the cutoff time for trade types not defined.  <br>  <br>Applicable to any Trade entry |\n| deliveryType | Char | Mandatory if Category = O (option) OR F (Futures)  <br>Delivery type  <br>P = Physical  <br>C = Cash  <br>N = Non-Deliverable  <br>X = Not set |\n| contractSize | Decimal String | Optional  <br>Contract size  <br>  <br>`(NEW v1.54.0)`  <br>The multiplier used to convert instrument trading units to Settlement units (i.e. asset traded in kg and settled in grams)  <br>  <br>If not set, treated as contractSize = 1 |\n| contractSizeUnit | String | Optional  <br>  <br>Specifies the units that instrument is trading in. |\n| `(NEW v1.54.0)`  <br>priceMultiplier | Decimal | Optional  <br>The multiplier used to convert quoted per units to Settlement units  <br>  <br>For example, GOLD 99.99% quoted in USD per oz. price multiplier is applicable to “per oz” part of the definition.  <br>  <br>If not set, treated as priceMultiplier = 1 |\n| `(NEW v1.54.0)`  <br>priceUnit | String | Optional  <br>  <br>Specifies the quoted unit of the instrument. For example, the price is quoted per Oz. |\n| expiryDate | Date | Mandatory if Category = O (option)  <br>Expiry date. format YYYY-MM-DD |\n| strike | Decimal String | Mandatory if Category = O (option)  <br>Option strike |\n| exerciseType | Char | Mandatory if Category = O (option)  <br>Option exercise type  <br>A = American  <br>E = European  <br>B = Bermudan |\n| dailyMinPricePercentage | Decimal | Minimum allowed price % change from the last reference price for the instrument |\n| dailyMaxPricePercentage | Decimal | Maximum allowed price % change from the last reference price for the instrument |\n| (NEW v1.52.0)  <br>dailyMinPriceAbsolute | Decimal | Minimum allowed absolute price change from the reference price for the instrument  <br>  <br>Cannot be used together with `dailyMinPricePercentage` |\n| (NEW v1.52.0)  <br>dailyMaxPriceAbsolute | Decimal | Maximum allowed absolute price change from the reference price for the instrument  <br>  <br>Cannot be used together with `dailyMaxPricePercentage` |\n| tickMinPricePercentage | Decimal | Minimum allowed price % change from the last executed price for the instrument |\n| tickMaxPricePercentage | Decimal | Maximum allowed price % change from the last executed price for the instrument |\n| (NEW v1.52.0)  <br>tickMinPriceAbsolute | Decimal | Minimum allowed absolute price change from the tick reference price  <br>  <br>Cannot be used together with `tickMinPricePercentage` |\n| (NEW v1.52.0)  <br>tickMaxPriceAbsolute | Decimal | Maximum allowed absolute price change from the tick reference price  <br>  <br>Cannot be used together with `tickMaxPricePercentage` |\n| (NEW v1.55.0)  <br>**applicablePriceBands** | List | Optional  <br>  <br>If not configured, all price bands apply for all trade types.  <br>If configured, only the specified price bands apply for specified trade types. |\n| \\>priceBand | eNum | Allowed values:  <br>\\- INSTRUMENT_MIN_MAX  <br>\\- DAILY_MIN_MAX  <br>\\- TICK_MIN_MAX |\n| \\>tradingTypes | \\[ \\]eNum | Optional  <br>If not defined, priceBand applies for all trade types  <br>  <br>Allowed values:  <br>\\- CLOB  <br>\\- RFQ  <br>\\- Trade Types on Trade Entry |\n| underlyingInstrumentId | Int | Applicable if Category = O (option) OR F (Futures) OR K (Strategies)  <br>Underlying instrument id. |\n| strategyType | eNum | Mandatory if Category = K (Strategies) Strategy type  <br>Available Values:  <br>\\- SPREAD  <br>\\- STRIP  <br>\\- (NEW v1.36.0) STRIP2 |\n| legsInstrumentsIds | \\[\\]Int | Mandatory if Category = K (Strategies)  <br>Array of instrument ids of that strategy - sorted so that leg1 is the first leg2 second etc.  <br>\\- On spread: 2 legs are required  <br>\\- On strips: 2 ≤ number of legs < 24 |\n| leg1ReferencePrice | Decimal | Optional  <br>Mandatory if Category = K (Strategies) AND strategyType=SPREAD. Optional if Category = K (Strategies) AND strategyType!=SPREAD  <br>Leg1 reference price |\n| legPriceBands | eNum | Optional  <br>Applicable only if Category = K (Strategies)  <br>Allowed values:  <br>No (default if not sent)  <br>Yes  <br>  <br>No = System doesn’t consider legs price bands on startegy acitivties.  <br>  <br>Yes = System prevents breaching price bands of legs during trades allocation and order entry |\n| (NEW v1.49.0)  <br>bidAskTickRefPrice | boolean | Optional  <br>true = System considers best Bid/best Ask when calculating tickReferencePrice  <br>  <br>false = best Bid/best Ask is not considered (deafult) |\n| coupon | Int | Only if Category = D(Dept instruments)  <br>The coupon of the bonds |\n| periodOfCoupon | eNum | Only if Category = D(Dept instruments)  <br>The period of the coupon  <br>optional values:  <br>ANNUAL  <br>SEMI_ANNUAL  <br>QUARTERLY |\n| accrualConvention | eNum | Only if Category = D(Dept instruments)  <br>The Convention calculate accrual of the coupon  <br>optinal values:  <br>ACT_ACT  <br>NO_ACCRUAL  <br>ACT_360  <br>_30E_360  <br>ACT_365 |\n| maturityDate | Date | Only if Category = D(Dept instruments)  <br>The maturity date of the bonds  <br>format YYYY-MM-DD |\n| deliveryStartDate | Date | Delivery start date.  <br>Applicable if Category = O (option) OR F (Futures) or K (Strategies)  <br>format YYYY-MM-DD |\n| deliveryEndDate | Date | Delivery end date.  <br>Applicable if Category = O (option) OR F (Futures) or K (Strategies)  <br>format YYYY-MM-DD |\n| (NEW v1.51.0)  <br>settlementDate | Date | Optional  <br>Applicable if Category = O (option) OR F (Futures) or K (Strategies)  <br>Settlement date. format YYYY-MM-DD |\n| (NEW v1.51.0)  <br>periodCode | String | Optional  <br>Applicable if Category = O (option) OR F (Futures) or K (Strategies)  <br>Period code |\n| tradingModels | \\[\\]eNum | Allowed values in the array  <br>CLOB: instrument supports Central Limit Order Book  <br>RFQ: instrument supports Request For Quote  <br>  <br>If the field doesn’t exist, the system treats as ‘CLOB’.  <br>  <br>The field is always included in the responses. |\n| maxRFQExpireTimePeriod | Int | Required if tradingModels has ‘RFQ’.  <br>Max allowed expiry time for an RFQ in seconds.  <br>  <br>  <br>Note: this is the time to maintain RFQ without expiration due to timeout. |\n| allegedTradeExpireTimePeriod | Int | `(CHANGED v1.51.0)`  <br>Active Alleged Trades are canceled by the system If configured, after allegedTradeExpireTimePeriod,  <br>If not configured, at EOD |\n| **minQuantityTradeEntries** | List | the minimum quntity for trade entry |\n| **\\>**type | eNum | trade entry type  <br>One of the below values the:  <br>  <br>Refer Trade Entry/type field for the values; all values are supported. |\n| \\>amount | Decimal | Min amount for Trade Entry for the selected type |\n\n###### Category List\n\n| category | category API |\n| --- | --- |\n| Equities | E |\n| Collective investment vehicles | C |\n| Debt instruments | D |\n| Entitlement (rights) | R |\n| Listed options | O |\n| Futures | F |\n| Swaps | S |\n| Non-listed and complex listed options | H |\n| Spot | I |\n| Forwards | J |\n| Strategies | K |\n| Financing | L |\n| Referential instruments | T |\n| Others (miscellaneous) | M |\n\n###### SubCategory List\n\n| category | subCategory | subCategory API |\n| --- | --- | --- |\n| Spot | Foreign exchange | F |\n| Spot | Commodities | T |\n| Futures | Financial futures | F |\n| Futures | Commodities futures | C |\n| Listed options | Call options | C |\n| Listed options | Put options | P |\n| Listed options | Other (miscellaneous) | M |\n| Debt instruments | Bonds | B |\n\n###### UnderlyingAssets List\n\n| category | subCategory | underlyingAssets | underlyingAssets API |\n| --- | --- | --- | --- |\n| \\- | \\- | None | NA |\n| Spot | Commodities | Agriculture | A |\n| Spot | Commodities | Energy | J |\n| Spot | Commodities | Metals | K |\n| Spot | Commodities | Environmental | N |\n| Spot | Commodities | Polypropylene Products | P |\n| Spot | Commodities | Fertilizer | S |\n| Spot | Commodities | Paper | T |\n| Spot | Commodities | Others (Miscellaneous) | M |\n| Spot | Commodities | Not Set | X |\n| Futures | Commodities futures | Extraction Resources | E |\n| Futures | Commodities futures | Agriculture | A |\n| Futures | Commodities futures | Industrial Products | I |\n| Futures | Commodities futures | Services | S |\n| Futures | Commodities futures | Environmental | N |\n| Futures | Commodities futures | Polypropylene Products | P |\n| Futures | Commodities futures | Generated Resources | H |\n| Futures | Commodities futures | Others | M |\n| Futures | Commodities futures | Not Set | X |\n| Futures | Financial futures | Baskets | B |\n| Futures | Financial futures | Stock-Equities | S |\n| Futures | Financial futures | Debt Instruments | D |\n| Futures | Financial futures | Currencies | C |\n| Futures | Financial futures | Indices | I |\n| Futures | Financial futures | Options | O |\n| Futures | Financial futures | Futures | F |\n| Futures | Financial futures | Swaps | W |\n| Futures | Financial futures | Interest Rates | N |\n| Futures | Financial futures | Stock Dividend | V |\n| Futures | Financial futures | Others (Miscellaneous) | M |\n| Futures | Financial futures | Not Set | X |\n| Listed Options |  | Baskets | B |\n| Listed Options |  | Stock-Equities | S |\n| Listed Options |  | Debt Instruments | D |\n| Listed Options |  | Commodities | T |\n| Listed Options |  | Currencies | C |\n| Listed Options |  | Indices | I |\n| Listed Options |  | Options | O |\n| Listed Options |  | Futures | F |\n| Listed Options |  | Swaps | W |\n| Listed Options |  | Interest Rates | N |\n| Listed Options |  | Others (Miscellaneous) | M |\n| Listed Options |  | Not Set | X |\n| Debt instruments | Bonds | Fixed Rate | F |\n| Debt instruments | Bonds | Zero Rate/Discounted | Z |\n| Debt instruments | Bonds | Variable | V |\n| Debt instruments | Bonds | Cash Payment | C |\n| Debt instruments | Bonds | Payment in Kind | K |\n\n---\n\n---",
+			"description": "Instruments API allows you to:\n\n- Get single instrument details\n    \n- Get the list of all instruments with their details\n    \n- Create an instrument\n    \n- Update existing instruments\n    \n- Archive an instrument that is no longer in use\n    \n\nSamples for both mandatory fields only and all fields can be found in the `Get Instrument` section\n\n#### Instrument Object - Mandatory Fields\n\n| Field | Type | Description |\n| --- | --- | --- |\n| id | Int String | Instrument ID (Not part of request body in Create/ Update Instrument) |\n| symbol | String | Unique Symbol of the instrument. Max length - 16, contains \\[a-Z,0-9,-,.,^,=,/\\] |\n| quoteCurrency | String | Quote currency |\n| calendarId | Int String | Calendar ID |\n| pricePrecision | Int String | Allowed decimal places for price. Max value: 10 |\n| quantityPrecision | Int String | Allowed decimal places for quantity. Max value: 10 |\n| minQuantity | Decimal String | Min order size |\n| maxQuantity | Decimal String | Max order size |\n| activityStatus | String | ACTIVE: trading allowed  <br>DISABLED: Trading not allowed  <br>ARCHIVED: Can't be used in Create/ Update APIs but only in the Get APIs, for more details see [here](https://documenter.getpostman.com/view/6229811/TzCV3jcq#a4a29f01-55ed-47a9-85f7-5db4e8d0026f) |\n| description | String | Instrument Description |\n\n#### Instrument Object - Optional Fields\n\nOptional fields should be omitted from request if not required\n\n| Field | Type | Description |\n| --- | --- | --- |\n| maxDepth | Decimal String | Maximum allowed depth (for both buy and sell) for the instrument |\n| maxOrderValue | Decimal String | Maximum allowed order value for the instrument in quote currency terms |\n| maxPrice | Decimal String | Maximum allowed price for the instrument |\n| minPrice | Decimal String | Minimum allowed price for the instrument |\n| quantityIncrement | Decimal String | Order quantity must be multiplied by the quantity increment |\n| tickSizeTableId | Int String | Tick size table ID |\n| groupIds | \\[\\]Int String | Optional  <br>A list of group Ids. |\n| category | Char | Instrument  <br>A table of available values is listed below |\n| subCategory | Char | Instrument sub category  <br>A table of available values is listed below |\n| underlyingAssets | Char | Instrument underlying assets type  <br>A table of available values is listed below |\n| cfi | String (6 chars ) | CFI code |\n| mic | String (4 chars ) | MIC code |\n| startDate | Unix time (sec) | Mandatory if Category = O (option) OR F (Futures)  <br>Used for derivatives, trading is allowed from this time.  <br>  <br>Before this time, marketStatus is in Closed state without changing as per the calendar. |\n| stopDate | Unix time (sec) | Mandatory if Category = O (option) OR F (Futures)  <br>Used for derivatives, trading is allowed up to this time.  <br>At this time all active orders are being cancelled.  <br>See tradingCutoffs for instrument expiration details  <br>  <br>At this time marketStatus changes to Closed and remains in the same state without changing as per the calendar. |\n| **tradingCutoffs** | List | list of trading cutoffs for Trade Entry trade types |\n| \\>type | eNum | One of the below values:  <br>  <br>Refer Trade Entry/type field for the values; all values are supported. |\n| \\>timestamp | Unix time (sec) | Cutoff time for trade reporting of the type defined in the ‘type’ field.  <br>Instrument status changed to be Disabled at the latest cutoff. (considering also the stopDate)  <br>  <br>If not defined, stopDate will be the cutoff time for trade types not defined.  <br>  <br>Applicable to any Trade entry |\n| deliveryType | Char | Mandatory if Category = O (option) OR F (Futures)  <br>Delivery type  <br>P = Physical  <br>C = Cash  <br>N = Non-Deliverable  <br>X = Not set |\n| contractSize | Decimal String | Optional  <br>Contract size  <br>  <br>`(NEW v1.54.0)`  <br>The multiplier used to convert instrument trading units to Settlement units (i.e. asset traded in kg and settled in grams)  <br>  <br>If not set, treated as contractSize = 1 |\n| contractSizeUnit | String | Optional  <br>  <br>Specifies the units that instrument is trading in. |\n| `(NEW v1.54.0)`  <br>priceMultiplier | Decimal | Optional  <br>The multiplier used to convert quoted per units to Settlement units  <br>  <br>For example, GOLD 99.99% quoted in USD per oz. price multiplier is applicable to “per oz” part of the definition.  <br>  <br>If not set, treated as priceMultiplier = 1 |\n| `(NEW v1.54.0)`  <br>priceUnit | String | Optional  <br>  <br>Specifies the quoted unit of the instrument. For example, the price is quoted per Oz. |\n| expiryDate | Date | Mandatory if Category = O (option)  <br>Expiry date. format YYYY-MM-DD |\n| strike | Decimal String | Mandatory if Category = O (option)  <br>Option strike |\n| exerciseType | Char | Mandatory if Category = O (option)  <br>Option exercise type  <br>A = American  <br>E = European  <br>B = Bermudan |\n| dailyMinPricePercentage | Decimal | Minimum allowed price % change from the last reference price for the instrument |\n| dailyMaxPricePercentage | Decimal | Maximum allowed price % change from the last reference price for the instrument |\n| (NEW v1.52.0)  <br>dailyMinPriceAbsolute | Decimal | Minimum allowed absolute price change from the reference price for the instrument  <br>  <br>Cannot be used together with `dailyMinPricePercentage` |\n| (NEW v1.52.0)  <br>dailyMaxPriceAbsolute | Decimal | Maximum allowed absolute price change from the reference price for the instrument  <br>  <br>Cannot be used together with `dailyMaxPricePercentage` |\n| tickMinPricePercentage | Decimal | Minimum allowed price % change from the last executed price for the instrument |\n| tickMaxPricePercentage | Decimal | Maximum allowed price % change from the last executed price for the instrument |\n| (NEW v1.52.0)  <br>tickMinPriceAbsolute | Decimal | Minimum allowed absolute price change from the tick reference price  <br>  <br>Cannot be used together with `tickMinPricePercentage` |\n| (NEW v1.52.0)  <br>tickMaxPriceAbsolute | Decimal | Maximum allowed absolute price change from the tick reference price  <br>  <br>Cannot be used together with `tickMaxPricePercentage` |\n| (NEW v1.55.0)  <br>**applicablePriceBands** | List | Optional  <br>  <br>If not configured, all price bands apply for all trade types.  <br>If configured, only the specified price bands apply for specified trade types. |\n| \\>priceBand | eNum | Allowed values:  <br>\\- INSTRUMENT_MIN_MAX  <br>\\- DAILY_MIN_MAX  <br>\\- TICK_MIN_MAX |\n| \\>tradingTypes | \\[ \\]eNum | Optional  <br>If not defined, priceBand applies for all trade types  <br>  <br>Allowed values:  <br>\\- CLOB  <br>\\- RFQ  <br>\\- Trade Types on Trade Entry |\n| underlyingInstrumentId | Int | Applicable if Category = O (option) OR F (Futures) OR K (Strategies)  <br>Underlying instrument id. |\n| strategyType | eNum | Mandatory if Category = K (Strategies) Strategy type  <br>Available Values:  <br>\\- SPREAD  <br>\\- STRIP  <br>\\- (NEW v1.36.0) STRIP2 |\n| legsInstrumentsIds | \\[\\]Int | Mandatory if Category = K (Strategies)  <br>Array of instrument ids of that strategy - sorted so that leg1 is the first leg2 second etc.  <br>\\- On spread: 2 legs are required  <br>\\- On strips: 2 ≤ number of legs < 24 |\n| leg1ReferencePrice | Decimal | Optional  <br>Mandatory if Category = K (Strategies) AND strategyType=SPREAD. Optional if Category = K (Strategies) AND strategyType!=SPREAD  <br>Leg1 reference price |\n| legPriceBands | eNum | Optional  <br>Applicable only if Category = K (Strategies)  <br>Allowed values:  <br>No (default if not sent)  <br>Yes  <br>  <br>No = System doesn’t consider legs price bands on startegy acitivties.  <br>  <br>Yes = System prevents breaching price bands of legs during trades allocation and order entry |\n| (NEW v1.49.0)  <br>bidAskTickRefPrice | boolean | Optional  <br>true = System considers best Bid/best Ask when calculating tickReferencePrice  <br>  <br>false = best Bid/best Ask is not considered (deafult) |\n| coupon | Int | Only if Category = D(Dept instruments)  <br>The coupon of the bonds |\n| periodOfCoupon | eNum | Only if Category = D(Dept instruments)  <br>The period of the coupon  <br>optional values:  <br>ANNUAL  <br>SEMI_ANNUAL  <br>QUARTERLY |\n| accrualConvention | eNum | Only if Category = D(Dept instruments)  <br>The Convention calculate accrual of the coupon  <br>optinal values:  <br>ACT_ACT  <br>NO_ACCRUAL  <br>ACT_360  <br>_30E_360  <br>ACT_365 |\n| maturityDate | Date | Only if Category = D(Dept instruments)  <br>The maturity date of the bonds  <br>format YYYY-MM-DD |\n| deliveryStartDate | Date | Delivery start date.  <br>Applicable if Category = O (option) OR F (Futures) or K (Strategies)  <br>format YYYY-MM-DD |\n| deliveryEndDate | Date | Delivery end date.  <br>Applicable if Category = O (option) OR F (Futures) or K (Strategies)  <br>format YYYY-MM-DD |\n| (NEW v1.51.0)  <br>settlementDate | Date | Optional  <br>Applicable if Category = O (option) OR F (Futures) or K (Strategies)  <br>Settlement date. format YYYY-MM-DD |\n| (NEW v1.51.0)  <br>periodCode | String | Optional  <br>Applicable if Category = O (option) OR F (Futures) or K (Strategies)  <br>Period code |\n| tradingModels | \\[\\]eNum | Allowed values in the array  <br>CLOB: instrument supports Central Limit Order Book  <br>RFQ: instrument supports Request For Quote  <br>  <br>If the field doesn’t exist, the system treats as ‘CLOB’.  <br>  <br>The field is always included in the responses. |\n| maxRFQExpireTimePeriod | Int | Required if tradingModels has ‘RFQ’.  <br>Max allowed expiry time for an RFQ in seconds.  <br>  <br>  <br>Note: this is the time to maintain RFQ without expiration due to timeout. |\n| allegedTradeExpireTimePeriod | Int | `(CHANGED v1.51.0)`  <br>Active Alleged Trades are canceled by the system If configured, after allegedTradeExpireTimePeriod,  <br>If not configured, at EOD |\n| **minQuantityTradeEntries** | List | the minimum quntity for trade entry |\n| **\\>**type | eNum | trade entry type  <br>One of the below values the:  <br>  <br>Refer Trade Entry/type field for the values; all values are supported. |\n| \\>amount | Decimal | Min amount for Trade Entry for the selected type |\n\n###### Category List\n\n| category | category API |\n| --- | --- |\n| Equities | E |\n| Collective investment vehicles | C |\n| Debt instruments | D |\n| Entitlement (rights) | R |\n| Listed options | O |\n| Futures | F |\n| Swaps | S |\n| Non-listed and complex listed options | H |\n| Spot | I |\n| Forwards | J |\n| Strategies | K |\n| Financing | L |\n| Referential instruments | T |\n| Others (miscellaneous) | M |\n\n###### SubCategory List\n\n| category | subCategory | subCategory API |\n| --- | --- | --- |\n| Spot | Foreign exchange | F |\n| Spot | Commodities | T |\n| Futures | Financial futures | F |\n| Futures | Commodities futures | C |\n| `(NEW v1.56.0)`  <br>Futures | Binary Event Contract  <br>Note: Yes instruments only | N |\n| Listed options | Call options | C |\n| Listed options | Put options | P |\n| Listed options | Other (miscellaneous) | M |\n| Debt instruments | Bonds | B |\n\n###### UnderlyingAssets List\n\n| category | subCategory | underlyingAssets | underlyingAssets API |\n| --- | --- | --- | --- |\n| \\- | \\- | None | NA |\n| Spot | Commodities | Agriculture | A |\n| Spot | Commodities | Energy | J |\n| Spot | Commodities | Metals | K |\n| Spot | Commodities | Environmental | N |\n| Spot | Commodities | Polypropylene Products | P |\n| Spot | Commodities | Fertilizer | S |\n| Spot | Commodities | Paper | T |\n| Spot | Commodities | Others (Miscellaneous) | M |\n| Spot | Commodities | Not Set | X |\n| Futures | Commodities futures | Extraction Resources | E |\n| Futures | Commodities futures | Agriculture | A |\n| Futures | Commodities futures | Industrial Products | I |\n| Futures | Commodities futures | Services | S |\n| Futures | Commodities futures | Environmental | N |\n| Futures | Commodities futures | Polypropylene Products | P |\n| Futures | Commodities futures | Generated Resources | H |\n| Futures | Commodities futures | Others | M |\n| Futures | Commodities futures | Not Set | X |\n| Futures | Financial futures | Baskets | B |\n| Futures | Financial futures | Stock-Equities | S |\n| Futures | Financial futures | Debt Instruments | D |\n| Futures | Financial futures | Currencies | C |\n| Futures | Financial futures | Indices | I |\n| Futures | Financial futures | Options | O |\n| Futures | Financial futures | Futures | F |\n| Futures | Financial futures | Swaps | W |\n| Futures | Financial futures | Interest Rates | N |\n| Futures | Financial futures | Stock Dividend | V |\n| Futures | Financial futures | Others (Miscellaneous) | M |\n| Futures | Financial futures | Not Set | X |\n| Listed Options |  | Baskets | B |\n| Listed Options |  | Stock-Equities | S |\n| Listed Options |  | Debt Instruments | D |\n| Listed Options |  | Commodities | T |\n| Listed Options |  | Currencies | C |\n| Listed Options |  | Indices | I |\n| Listed Options |  | Options | O |\n| Listed Options |  | Futures | F |\n| Listed Options |  | Swaps | W |\n| Listed Options |  | Interest Rates | N |\n| Listed Options |  | Others (Miscellaneous) | M |\n| Listed Options |  | Not Set | X |\n| Debt instruments | Bonds | Fixed Rate | F |\n| Debt instruments | Bonds | Zero Rate/Discounted | Z |\n| Debt instruments | Bonds | Variable | V |\n| Debt instruments | Bonds | Cash Payment | C |\n| Debt instruments | Bonds | Payment in Kind | K |\n\n---\n\n---",
 			"auth": {
 				"type": "bearer",
 				"bearer": {
@@ -9089,6 +9089,1475 @@
 			"name": "Operations API",
 			"item": [
 				{
+					"name": "Orders Management",
+					"item": [
+						{
+							"name": "Place Order",
+							"id": "88f2de2d-1ffa-4b03-8ac4-1b46f9e605bd",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"mpId\": \"11\",\n    \"orderType\": \"Limit\",\n    \"side\": \"Buy\",\n    \"quantity\": \"1.3\",\n    \"price\": \"100.33\",\n    \"instrumentId\": \"123\",\n    \"mpOrderId\": 998,\n    \"timeInForce\": \"GTC\",\n    \"accountType\": \"House\",\n    \"parties\": [\n      {\n        \"id\": \"veryCoolStringId\",\n        \"source\": \"D\",\n        \"role\": \"12\"\n      },\n      {\n        \"id\": \"user123\",\n        \"source\": \"D\",\n        \"role\": \"13\"\n      }\n    ]   \n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "{{URL_ORIGIN}}/api/operations/place-order",
+								"description": "Place Order API allows you to place an order for mp\n\nFor more details about place order - see [here](https://docs.exberry.io/ws/trading-api#placeorder)\n\n#### Place order- Fields\n\n| **Field** | **Type** | **Description** |\n| --- | --- | --- |\n| instrumentId | Int String | Instrument id for the order |\n| mpId | Int String | mpId |\n| mpOrderId | Long | Similar to the [trading API](https://docs.exberry.io/ws/trading-api#placeorder) |\n| orderType | Enum | Similar to the [trading API](https://docs.exberry.io/ws/trading-api#placeorder) |\n| side | Enum | Similar to the [trading API](https://docs.exberry.io/ws/trading-api#placeorder) |\n| quantity | Decimal String | Similar to the [trading API](https://docs.exberry.io/ws/trading-api#placeorder) |\n| price `optional` | Decimal String | Similar to the [trading API](https://docs.exberry.io/ws/trading-api#placeorder) |\n| timeInForce `optional` | Enum | Similar to the [trading API](https://docs.exberry.io/ws/trading-api#placeorder) |\n| expiryDate `optional` | UTC Time[](https://docs.exberry.io/ws/trading-api#placeorder) | Similar to the [trading API](https://docs.exberry.io/ws/trading-api#placeorder) |\n| expiryDay `optional` | String | Similar to the [trading API](https://docs.exberry.io/ws/trading-api#placeorder) |\n| minQuantity `optional` | Decimal String | Similar to the [trading API](https://docs.exberry.io/ws/trading-api#placeorder) |\n| stopPrice `optional` | Decimal String | Similar to the [trading API](https://docs.exberry.io/ws/trading-api#placeorder) |\n| stpAction `optional` | Enum | Similar to the [trading API](https://docs.exberry.io/ws/trading-api#placeorder) |\n| accountType `optional` | Enum | Similar to the [trading API](https://docs.exberry.io/ws/trading-api#placeorder) |\n| parties `optional` | \\[\\] Object | Similar to the [trading API](https://docs.exberry.io/ws/trading-api#placeorder) |\n| displayMethod `optional` | Enum | Similar to the [trading API](https://docs.exberry.io/ws/trading-api#placeorder) |\n| displayQuantity `optional` | Decimal String | Similar to the [trading API](https://docs.exberry.io/ws/trading-api#placeorder) |\n| displayLowQuantity `optional` | Decimal String | Similar to the [trading API](https://docs.exberry.io/ws/trading-api#placeorder) |\n| displayHighQuantity `optional` | Decimal String | Similar to the [trading API](https://docs.exberry.io/ws/trading-api#placeorder) |\n| `(NEW v1.50.0)`  <br>metadata `optional` | String | Similar to the [trading API](https://docs.exberry.io/ws/trading-api#placeorder) |\n\n#### Place Order - Error Codes\n\n1. Validations: same as [place order](https://docs.google.com/document/d/1N_7UEglP8s6hNV9ZeE5MN2NWdpJw-phRbo8Pk3qW2Go/edit#bookmark=id.gsv875ykqvln), with the below changes:\n    \n    1. Skip validations 1007 & 1008 & 1011 (Authentication related)\n        \n2. Additional validation:\n    \n\n| Code | Message |\n| --- | --- |\n| 100 | Missing or invalid parameter: \\[FieldName\\] |\n| 10001 | Permission denied |"
+							},
+							"response": [
+								{
+									"id": "79dba794-4e19-4943-9b92-de029d9f79fd",
+									"name": "Success",
+									"originalRequest": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"mpId\": \"15\",\n    \"orderType\": \"Limit\",\n    \"side\": \"Buy\",\n    \"quantity\": \"1.3\",\n    \"price\": \"100.33\",\n    \"instrumentId\": \"239\",\n    \"mpOrderId\": \"9999\",\n    \"timeInForce\": \"GTC\",\n    \"accountType\": \"House\",\n    \"parties\": [\n      {\n        \"id\": \"veryCoolStringId\",\n        \"source\": \"D\",\n        \"role\": \"12\"\n      },\n      {\n        \"id\": \"user123\",\n        \"source\": \"D\",\n        \"role\": \"13\"\n      }\n    ]   \n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": "{{URL_ORIGIN}}/api/operations/place-order"
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Date",
+											"value": "Sun, 31 Mar 2024 07:04:11 GMT"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json; charset=utf-8"
+										},
+										{
+											"key": "Content-Length",
+											"value": "40"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										},
+										{
+											"key": "Access-Control-Allow-Origin",
+											"value": "*"
+										},
+										{
+											"key": "Content-Security-Policy",
+											"value": "default-src self;base-uri self;connect-src self;object-src none;block-all-mixed-content;upgrade-insecure-requests;script-src self;script-src-attr none"
+										},
+										{
+											"key": "Etag",
+											"value": "W/\"28-iTiQJdQgmusqiq6zDgjzL2Zt2HY\""
+										},
+										{
+											"key": "Expect-Ct",
+											"value": "max-age=0"
+										},
+										{
+											"key": "Referrer-Policy",
+											"value": "no-referrer"
+										},
+										{
+											"key": "Strict-Transport-Security",
+											"value": "max-age=15552000; includeSubDomains"
+										},
+										{
+											"key": "X-Content-Type-Options",
+											"value": "nosniff"
+										},
+										{
+											"key": "X-Dns-Prefetch-Control",
+											"value": "off"
+										},
+										{
+											"key": "X-Download-Options",
+											"value": "noopen"
+										},
+										{
+											"key": "X-Frame-Options",
+											"value": "SAMEORIGIN"
+										},
+										{
+											"key": "X-Permitted-Cross-Domain-Policies",
+											"value": "none"
+										},
+										{
+											"key": "X-Xss-Protection",
+											"value": "0"
+										}
+									],
+									"cookie": [],
+									"responseTime": null,
+									"body": "{\n    \"orderId\": \"71\",\n    \"orderStatus\": \"Pending\"\n}"
+								},
+								{
+									"id": "2a07a1f0-7c8c-476f-8bbb-853474f3e34d",
+									"name": "Failure",
+									"originalRequest": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"mpId\": \"30\",\n    \"orderType\": \"Limit\",\n    \"side\": \"Buy\",\n    \"quantity\": \"1.3\",\n    \"price\": \"100.33\",\n    \"instrumentId\": \"123\",\n    \"mpOrderId\": \"1005\",\n    \"timeInForce\": \"GTC\",\n    \"accountType\": \"House\",\n    \"parties\": [\n      {\n        \"id\": \"veryCoolStringId\",\n        \"source\": \"D\",\n        \"role\": \"12\"\n      },\n      {\n        \"id\": \"user123\",\n        \"source\": \"D\",\n        \"role\": \"13\"\n      }\n    ]   \n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": "{{URL_ORIGIN}}/api/operations/place-order"
+									},
+									"status": "Internal Server Error",
+									"code": 500,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Date",
+											"value": "Sun, 31 Mar 2024 07:02:53 GMT"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json; charset=utf-8"
+										},
+										{
+											"key": "Content-Length",
+											"value": "47"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										},
+										{
+											"key": "Access-Control-Allow-Origin",
+											"value": "*"
+										},
+										{
+											"key": "Content-Security-Policy",
+											"value": "default-src self;base-uri self;connect-src self;object-src none;block-all-mixed-content;upgrade-insecure-requests;script-src self;script-src-attr none"
+										},
+										{
+											"key": "Etag",
+											"value": "W/\"2f-DYn3DgNH9R+2QXxcwxFF+tmEU/A\""
+										},
+										{
+											"key": "Expect-Ct",
+											"value": "max-age=0"
+										},
+										{
+											"key": "Referrer-Policy",
+											"value": "no-referrer"
+										},
+										{
+											"key": "Strict-Transport-Security",
+											"value": "max-age=15552000; includeSubDomains"
+										},
+										{
+											"key": "X-Content-Type-Options",
+											"value": "nosniff"
+										},
+										{
+											"key": "X-Dns-Prefetch-Control",
+											"value": "off"
+										},
+										{
+											"key": "X-Download-Options",
+											"value": "noopen"
+										},
+										{
+											"key": "X-Frame-Options",
+											"value": "SAMEORIGIN"
+										},
+										{
+											"key": "X-Permitted-Cross-Domain-Policies",
+											"value": "none"
+										},
+										{
+											"key": "X-Xss-Protection",
+											"value": "0"
+										}
+									],
+									"cookie": [],
+									"responseTime": null,
+									"body": "{\n    \"code\": \"101\",\n    \"message\": \"Instrument not found\"\n}"
+								}
+							]
+						},
+						{
+							"name": "Cancel Order",
+							"id": "851b1fad-b6c4-4615-9cc9-5c824a59294b",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\"instrumentId\": \"123\",\n\"orderId\": \"1\"\n}\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "{{URL_ORIGIN}}/api/operations/cancel-order",
+								"description": "Cancel Order API allows you to cancel order\n\n#### Cancel order - Fields\n\n| **Field** | **Type** | **Description** |\n| --- | --- | --- |\n| instrumentId | Int | Instrument id for the trade |\n| orderId | Int | the Id of the order we want to cancel |\n| `(NEW 1.32.0)`  <br>cancelReason | Enum | Optional  <br>Cancellation reason. (populated in the cancellation events)  <br>  <br>Allowed values:  <br>CancelOrderOnBehalf(default if nothing is sent)  <br>CancelRequest  <br>CorporateAction |\n\n#### Cancel Order - Error Codes\n\n| Code | Message |\n| --- | --- |\n| 1 | System is unavailable |\n| 100 | Missing or invalid parameter: \\[FieldName\\] |\n| 101 | \\[FieldName\\] not found |\n| 102 | Trading is not allowed during crossing |\n| 102 | Instrument trading is not allowed |\n| 102 | Market is closed |\n| 102 | Instrument trading is halt |\n| 101 | Not allowed |\n| `(NEW 1.37.0)`  <br>108 | Cancellation of implied order is not allowed |\n| 10001 | Permission denied |"
+							},
+							"response": [
+								{
+									"id": "b7c6ea04-eeaa-454c-89af-53ca80cbdcf0",
+									"name": "Success",
+									"originalRequest": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n\"instrumentId\": \"239\",\n\"orderId\": \"60\"\n}\n",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": "{{URL_ORIGIN}}/api/operations/cancel-order"
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Date",
+											"value": "Tue, 20 Feb 2024 14:16:26 GMT"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json; charset=utf-8"
+										},
+										{
+											"key": "Content-Length",
+											"value": "0"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										},
+										{
+											"key": "Access-Control-Allow-Origin",
+											"value": "*"
+										},
+										{
+											"key": "Content-Security-Policy",
+											"value": "default-src 'self';base-uri 'self';font-src 'self' https: data:;form-action 'self';frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src 'self';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests"
+										},
+										{
+											"key": "Cross-Origin-Opener-Policy",
+											"value": "same-origin"
+										},
+										{
+											"key": "Cross-Origin-Resource-Policy",
+											"value": "same-origin"
+										},
+										{
+											"key": "Origin-Agent-Cluster",
+											"value": "?1"
+										},
+										{
+											"key": "Referrer-Policy",
+											"value": "no-referrer"
+										},
+										{
+											"key": "Strict-Transport-Security",
+											"value": "max-age=15552000; includeSubDomains"
+										},
+										{
+											"key": "X-Content-Type-Options",
+											"value": "nosniff"
+										},
+										{
+											"key": "X-Dns-Prefetch-Control",
+											"value": "off"
+										},
+										{
+											"key": "X-Download-Options",
+											"value": "noopen"
+										},
+										{
+											"key": "X-Frame-Options",
+											"value": "SAMEORIGIN"
+										},
+										{
+											"key": "X-Permitted-Cross-Domain-Policies",
+											"value": "none"
+										},
+										{
+											"key": "X-Xss-Protection",
+											"value": "0"
+										}
+									],
+									"cookie": [],
+									"responseTime": null,
+									"body": null
+								},
+								{
+									"id": "bf326934-61ba-431e-bf96-aab60b876691",
+									"name": "Failure",
+									"originalRequest": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n\"instrumentId\": \"1\",\n\"matchId\": \"99\"\n}\n",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": "{{URL_ORIGIN}}/api/operations/cancel-order"
+									},
+									"status": "Internal Server Error",
+									"code": 500,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Date",
+											"value": "Thu, 07 Mar 2024 08:56:51 GMT"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json; charset=utf-8"
+										},
+										{
+											"key": "Content-Length",
+											"value": "47"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										},
+										{
+											"key": "Access-Control-Allow-Origin",
+											"value": "*"
+										},
+										{
+											"key": "Content-Security-Policy",
+											"value": "default-src 'self';base-uri 'self';block-all-mixed-content;font-src 'self' https: data:;frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src 'self';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests"
+										},
+										{
+											"key": "Etag",
+											"value": "W/\"2f-DYn3DgNH9R+2QXxcwxFF+tmEU/A\""
+										},
+										{
+											"key": "Expect-Ct",
+											"value": "max-age=0"
+										},
+										{
+											"key": "Referrer-Policy",
+											"value": "no-referrer"
+										},
+										{
+											"key": "Strict-Transport-Security",
+											"value": "max-age=15552000; includeSubDomains"
+										},
+										{
+											"key": "X-Content-Type-Options",
+											"value": "nosniff"
+										},
+										{
+											"key": "X-Dns-Prefetch-Control",
+											"value": "off"
+										},
+										{
+											"key": "X-Download-Options",
+											"value": "noopen"
+										},
+										{
+											"key": "X-Frame-Options",
+											"value": "SAMEORIGIN"
+										},
+										{
+											"key": "X-Permitted-Cross-Domain-Policies",
+											"value": "none"
+										},
+										{
+											"key": "X-Xss-Protection",
+											"value": "0"
+										}
+									],
+									"cookie": [],
+									"responseTime": null,
+									"body": "{\n    \"code\": \"101\",\n    \"message\": \"Instrument not found\"\n}"
+								}
+							]
+						},
+						{
+							"name": "Replace Order",
+							"id": "ddc62818-9307-459b-bbca-4a5b27ffeaef",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"orderId\": \"71\",\n    \"instrumentId\": \"123\",\n    \"quantity\": \"10\",\n    \"price\": \"1\",\n    \"timeInForce\": \"GTC\" \n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "{{URL_ORIGIN}}/api/operations/replace-order",
+								"description": "Replace Order API allows you to replace an order for mp.\n\nFor more details about replace order - see [here](https://docs.exberry.io/ws/trading-api#replaceorder)\n\n#### Replace order- Fields\n\n| **Field** | **Type** | **Description** |\n| --- | --- | --- |\n| instrumentId | Int String | Original order instrument Id |\n| orderId | Int String | Exchange order ID to be replaced |\n| quantity | Decimal String | Similar to the [trading API](https://docs.exberry.io/ws/trading-api#replaceorder) |\n| price `optional` | Decimal String | Similar to the [trading API](https://docs.exberry.io/ws/trading-api#replaceorder) |\n| timeInForce `optional` | Enum | Similar to the [trading API](https://docs.exberry.io/ws/trading-api#replaceorder) |\n| expiryDate `optional` | UTC Time | Similar to the [trading API](https://docs.exberry.io/ws/trading-api#replaceorder) |\n| expiryDay `optional` | String | Similar to the [trading API](https://docs.exberry.io/ws/trading-api#replaceorder) |\n| minQuantity `optional` | Decimal String | Similar to the [trading API](https://docs.exberry.io/ws/trading-api#replaceorder) |\n| stopPrice `optional` | Decimal String | Similar to the [trading API](https://docs.exberry.io/ws/trading-api#replaceorder) |\n| stpAction `optional` | Enum | Similar to the [trading API](https://docs.exberry.io/ws/trading-api#replaceorder) |\n| displayQuantity `optional` | Decimal String | Similar to the [trading API](https://docs.exberry.io/ws/trading-api#replaceorder) |\n| displayLowQuantity `optional` | Decimal String | Similar to the [trading API](https://docs.exberry.io/ws/trading-api#replaceorder) |\n| displayHighQuantity `optional` | Decimal String | Similar to the [trading API](https://docs.exberry.io/ws/trading-api#replaceorder) |\n| `(NEW v1.51.0)`metadata `optional` | String | Similar to the [trading API](https://docs.exberry.io/ws/trading-api#replaceorder) |\n\n#### Relace Order - Error Codes\n\n1. Validations: same as [replaceOrder](https://docs.exberry.io/ws/trading-api#replaceorder), with the below changes:\n    \n    1. Skip validations 1007 & 1008 &1011 (Authentication related)\n        \n2. Additional validations:\n    \n\n| Code | Message |\n| --- | --- |\n| 10001 | Permission denied |\n| 108 | Changes to the implied orders are not allowed |"
+							},
+							"response": [
+								{
+									"id": "ba180b76-dcd6-4b95-974d-1afdd555f485",
+									"name": "Success",
+									"originalRequest": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"orderId\": \"71\",\n    \"instrumentId\": \"123\",\n    \"quantity\": \"10\",\n    \"price\": \"1\",\n    \"timeInForce\": \"GTC\" \n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": "{{URL_ORIGIN}}/api/operations/replace-order"
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Date",
+											"value": "Sun, 31 Mar 2024 08:01:11 GMT"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json; charset=utf-8"
+										},
+										{
+											"key": "Content-Length",
+											"value": "42"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										},
+										{
+											"key": "Access-Control-Allow-Origin",
+											"value": "*"
+										},
+										{
+											"key": "Content-Security-Policy",
+											"value": "default-src self;base-uri self;connect-src self;object-src none;block-all-mixed-content;upgrade-insecure-requests;script-src self;script-src-attr none"
+										},
+										{
+											"key": "Etag",
+											"value": "W/\"2a-psCwrpD2GreUDMPjp0zplHn6jcc\""
+										},
+										{
+											"key": "Expect-Ct",
+											"value": "max-age=0"
+										},
+										{
+											"key": "Referrer-Policy",
+											"value": "no-referrer"
+										},
+										{
+											"key": "Strict-Transport-Security",
+											"value": "max-age=15552000; includeSubDomains"
+										},
+										{
+											"key": "X-Content-Type-Options",
+											"value": "nosniff"
+										},
+										{
+											"key": "X-Dns-Prefetch-Control",
+											"value": "off"
+										},
+										{
+											"key": "X-Download-Options",
+											"value": "noopen"
+										},
+										{
+											"key": "X-Frame-Options",
+											"value": "SAMEORIGIN"
+										},
+										{
+											"key": "X-Permitted-Cross-Domain-Policies",
+											"value": "none"
+										},
+										{
+											"key": "X-Xss-Protection",
+											"value": "0"
+										}
+									],
+									"cookie": [],
+									"responseTime": null,
+									"body": "{\n    \"orderId\": \"71\",\n    \"originalOrderId\": \"71\",\n    \"newOrderId\": \"71\"\n}"
+								},
+								{
+									"id": "3ea3eeb1-1946-4f9e-a2b7-4e5576c73b38",
+									"name": "Failure",
+									"originalRequest": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n    \"orderId\": \"71\",\n    \"instrument\": \"AMZ\",\n    \"quantity\": \"10\",\n    \"price\": \"1\",\n    \"timeInForce\": \"GTC\" \n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": "{{URL_ORIGIN}}/api/operations/replace-order"
+									},
+									"status": "Internal Server Error",
+									"code": 500,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Date",
+											"value": "Sun, 31 Mar 2024 08:00:43 GMT"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json; charset=utf-8"
+										},
+										{
+											"key": "Content-Length",
+											"value": "69"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										},
+										{
+											"key": "Access-Control-Allow-Origin",
+											"value": "*"
+										},
+										{
+											"key": "Content-Security-Policy",
+											"value": "default-src self;base-uri self;connect-src self;object-src none;block-all-mixed-content;upgrade-insecure-requests;script-src self;script-src-attr none"
+										},
+										{
+											"key": "Etag",
+											"value": "W/\"45-HhSSBddz/f8ikDSlzg66+DQ2AE0\""
+										},
+										{
+											"key": "Expect-Ct",
+											"value": "max-age=0"
+										},
+										{
+											"key": "Referrer-Policy",
+											"value": "no-referrer"
+										},
+										{
+											"key": "Strict-Transport-Security",
+											"value": "max-age=15552000; includeSubDomains"
+										},
+										{
+											"key": "X-Content-Type-Options",
+											"value": "nosniff"
+										},
+										{
+											"key": "X-Dns-Prefetch-Control",
+											"value": "off"
+										},
+										{
+											"key": "X-Download-Options",
+											"value": "noopen"
+										},
+										{
+											"key": "X-Frame-Options",
+											"value": "SAMEORIGIN"
+										},
+										{
+											"key": "X-Permitted-Cross-Domain-Policies",
+											"value": "none"
+										},
+										{
+											"key": "X-Xss-Protection",
+											"value": "0"
+										}
+									],
+									"cookie": [],
+									"responseTime": null,
+									"body": "{\n    \"code\": \"100\",\n    \"message\": \"Missing or invalid parameter: instrumentId\"\n}"
+								}
+							]
+						},
+						{
+							"name": "Mass Cancel",
+							"id": "18f744b9-350d-4b9c-9c6a-cc6920fb8f29",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "",
+										"value": "",
+										"disabled": true
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"targetScope\": \"Instrument\",\n    \"instrumentId\": \"239\",\n    \"targetEntities\": [\n        \"Order\",\n        \"RFQ\"\n    ],\n    \"mpId\": \"15\",\n    \"targetParties\": [\n        {\n            \"id\": \"53\",\n            \"source\": \"M\",\n            \"role\": 1001\n        }\n    ]\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "{{URL_ORIGIN}}/api/operations/mass-cancel",
+								"description": "Mass Cancel API allows you to mass cancel pending activity per request criteria:\n\nRequest Parameters\n\n| **Field** | **Type** | **Description** |\n| --- | --- | --- |\n| instrumentId | Stringfied number | Instrument ID to mass cancel the orders |\n| `Removed v1.30.0`  <br>~~comment~~ | ~~String~~ | ~~Free text comment~~ |\n| mpId | Stringfied number | `Optional`  <br>MP ID to mass cancel the target entities  <br>Not sending this parameter will mass cancel for all MPs |\n| targetParties | \\[\\]TargetParty objects | `Optional`  <br>  <br>targetParties to target the mass cancel orders.  <br>If multiple targetParty objects are in a request, the system cancels orders with all targetParties.  <br>For example:  <br>Order1 has party1  <br>Order2 has party1 and party2  <br>Order3 has party1, party2 and party3  <br>Order4 has no parties  <br>A mass cancel request with targetParties(party1 and party2) will cancel order 2 and 3.  <br>  <br>`CHANGED v1.46.0` Note: For accounts: id=accountId, ~~source=D, role=1001~~ source=P, role=24 |\n| `(NEW 1.30.0)` targetEntities | \\[\\] Enum | `Optional`  <br>  <br>The system cancels the type of active entities mentioned in the request.  <br>  <br>Array of below values:  <br>Order - cancels all orders  <br>RFQ - cancels all RFQs and all active quotes belong to them  <br>Quote - cancels all Quotes  <br>`(NEW v1.31.0)` AllegedTrade - cancels all Alleged Trades  <br>  <br>If not exist, system considers as targetEntities = \\[‘Order’\\] |\n| `(NEW 1.31.0)` targetScope | Enum | The field specifies the scope the mass cancel request applies to  <br>  <br>Allowed values:  <br>Instrument - cancel scope is a single instrument  <br>All - cancel scope is all instruments  <br>  <br>If not sent “Instrument” is considered. |\n| `(NEW 1.32.0)`  <br>cancelReason | Enum | Optional  <br>Cancellation reason. (populated in the cancellation events)  <br>  <br>Allowed values:  <br>MassCancelOnBehalf (default if nothing is sent)  <br>MassCancelRequest  <br>CorporateAction |\n\n##### NEW **TargetParty specification:**\n\n| **Field** | **Type** | **Description** |\n| --- | --- | --- |\n| id | string | TargetParty id |\n| source | char | TargetParty source |\n| role | int | TargetParty role |\n\n#### Mass Cancel- Error Codes\n\n| Code | Message |\n| --- | --- |\n| 2001 | Wrong action |\n| 2001 | Wrong instrumentIds |\n| 2401 | Wrong instrumentId: \\[instrumentId\\] |\n| 403 | Permission denied |"
+							},
+							"response": [
+								{
+									"id": "019e6add-49c6-4064-ad74-2666777d7682",
+									"name": "Success",
+									"originalRequest": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "",
+												"value": "",
+												"disabled": true
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n \"instrumentId\": \"12141\",\n \"mpId\": \"2087505416\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": "{{URL_ORIGIN}}/api/operations/mass-cancel"
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Date",
+											"value": "Wed, 08 Feb 2023 10:48:35 GMT"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json; charset=utf-8"
+										},
+										{
+											"key": "Content-Length",
+											"value": "22"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										},
+										{
+											"key": "Access-Control-Allow-Origin",
+											"value": "*"
+										},
+										{
+											"key": "Content-Security-Policy",
+											"value": "default-src 'self';base-uri 'self';block-all-mixed-content;font-src 'self' https: data:;frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src 'self';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests"
+										},
+										{
+											"key": "Etag",
+											"value": "W/\"16-yG0f7a9pASCFmeUXjEVFhzKmHXc\""
+										},
+										{
+											"key": "Expect-Ct",
+											"value": "max-age=0"
+										},
+										{
+											"key": "Referrer-Policy",
+											"value": "no-referrer"
+										},
+										{
+											"key": "Strict-Transport-Security",
+											"value": "max-age=15552000; includeSubDomains"
+										},
+										{
+											"key": "X-Content-Type-Options",
+											"value": "nosniff"
+										},
+										{
+											"key": "X-Dns-Prefetch-Control",
+											"value": "off"
+										},
+										{
+											"key": "X-Download-Options",
+											"value": "noopen"
+										},
+										{
+											"key": "X-Frame-Options",
+											"value": "SAMEORIGIN"
+										},
+										{
+											"key": "X-Permitted-Cross-Domain-Policies",
+											"value": "none"
+										},
+										{
+											"key": "X-Xss-Protection",
+											"value": "0"
+										}
+									],
+									"cookie": [],
+									"responseTime": null,
+									"body": "{\n    \"numberOfOrders\": \"9\",\n    \"numberOfRfqs\": 7\n}"
+								},
+								{
+									"id": "0163fba3-063f-474b-8fb0-428a914162f5",
+									"name": "Faliure",
+									"originalRequest": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "",
+												"value": "",
+												"disabled": true
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n \"instrumentId\": \"1234\",\n \"mpId\": \"2087505416\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": "{{URL_ORIGIN}}/api/operations/mass-cancel"
+									},
+									"status": "Bad Request",
+									"code": 400,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Date",
+											"value": "Sun, 12 Feb 2023 12:50:43 GMT"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json; charset=utf-8"
+										},
+										{
+											"key": "Content-Length",
+											"value": "37"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										},
+										{
+											"key": "Access-Control-Allow-Origin",
+											"value": "*"
+										},
+										{
+											"key": "Content-Security-Policy",
+											"value": "default-src 'self';base-uri 'self';block-all-mixed-content;font-src 'self' https: data:;frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src 'self';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests"
+										},
+										{
+											"key": "Etag",
+											"value": "W/\"25-930+wpOoC7JXFiCONDtAcR0XrL4\""
+										},
+										{
+											"key": "Expect-Ct",
+											"value": "max-age=0"
+										},
+										{
+											"key": "Referrer-Policy",
+											"value": "no-referrer"
+										},
+										{
+											"key": "Strict-Transport-Security",
+											"value": "max-age=15552000; includeSubDomains"
+										},
+										{
+											"key": "X-Content-Type-Options",
+											"value": "nosniff"
+										},
+										{
+											"key": "X-Dns-Prefetch-Control",
+											"value": "off"
+										},
+										{
+											"key": "X-Download-Options",
+											"value": "noopen"
+										},
+										{
+											"key": "X-Frame-Options",
+											"value": "SAMEORIGIN"
+										},
+										{
+											"key": "X-Permitted-Cross-Domain-Policies",
+											"value": "none"
+										},
+										{
+											"key": "X-Xss-Protection",
+											"value": "0"
+										}
+									],
+									"cookie": [],
+									"responseTime": null,
+									"body": "{\n    \"code\": 101,\n    \"message\": \"id not found\"\n}"
+								}
+							]
+						}
+					],
+					"id": "d9b6f6ec-a50a-4147-9d63-dafe8d830a85"
+				},
+				{
+					"name": "Trades Management",
+					"item": [
+						{
+							"name": "Trade Entry",
+							"id": "909a5a9c-3385-43af-9569-ea3168a331e9",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"instrumentId\": \"963\",\n  \"type\": \"Block\",\n  \"price\": \"1234\",\n  \"quantity\": \"0.2\",\n  \"buy\": {\n    \"mpId\": \"2087505339\",\n    \"accountType\": \"Client\",\n    \"parties\": [\n      {\n        \"id\": \"ABC\",\n        \"source\": \"D\",\n        \"role\": \"38\"\n      }\n    ]\n  },\n  \"sell\": {\n    \"mpId\": \"2087505348\",\n    \"accountType\": \"House\",\n    \"parties\": [\n      {\n        \"id\": \"12345\",\n        \"source\": \"D\",\n        \"role\": \"38\"\n      }\n    ]\n  }\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "{{URL_ORIGIN}}/api/operations/enter-trade",
+								"description": "Trade Entry API allows you to capture trade that was done out of the order book\n\n#### Trade Entry- Fields\n\n| **Field** | **Type** | **Description** |\n| --- | --- | --- |\n| instrumentId | Int | Instrument id for the trade |\n| type | eNum | Type of the trade entry  <br>  <br>See the table below for supported values |\n| price | Decimal | Trade price |\n| quantity | Decimal | Trade quantity |\n| buy | Side obj | See below |\n| sell | Side obj | See below |\n\n##### Side obj-\n\n| **Field** | **Type** | **Description** |\n| --- | --- | --- |\n| mpId | Int | mpId |\n| accountType | eNum | Client/House |\n| parties | \\[\\]obj | list of parties obj |\n\n###### parties obj-\n\n| **Field** | **Type** | **Description** |\n| --- | --- | --- |\n| id | string(20) | The Id of the party |\n| source | Char | Id source = D |\n| role | int | Id role = 38 |\n\n##### Supported values for the type field\n\n| Trade Type | Description | **FIX** TrdType(828) |\n| --- | --- | --- |\n| Block | Block trade | 1 |\n| Other | Other | 99 |\n| EFRP | Exchange for Related Position | 2 |\n| ECRP | Exchange of Contracts for Related Positions | 101 |\n| EFP | Exchange for Physical | 102 |\n| `(NEW v1.47.0)` Reversal | Trade Reversal | 103 |\n| Transfer | Transfer | 3 |\n| EFS | Exchange for Swap | 12 |\n| EFR | Exchange for Risk | 11 |\n| EOO | Exchange of Options for Options | 14 |\n| OPNT | Over the Counter Privately Negotiated Trades | 22 |\n| SFF | Substitution of Futures for Forwards | 23 |\n| OptionExercise | Option exercise | 45 |\n| OTCLNOFS | OTC / Large Notional Off Facility Swap | 54 |\n| EBF | Exchange Basis Facility | 55 |\n| Netted | Netted trade | 57 |\n| BlockSwap | Block swap trade | 58 |\n| CreditEvent | Credit event trade | 59 |\n| SuccessionEvent | Succession event trade | 60 |\n\n#### Trade Entry- Error Codes\n\n| Code | Message |\n| --- | --- |\n| 1 | System is unavailable |\n| 100 | Missing or invalid parameter: \\[FieldName\\] |\n| 100 | Trade \\[FieldName\\] must be less than \\[maxLong/10^ fieldPrecision |\n| 100 | Trade \\[FieldName\\] must be above than \\[minLong/10^ fieldPrecision\\] |\n| 101 | \\[FieldName\\] not found |\n| 102 | Currently not allowed |\n| 102 | Trading is not allowed during auction call |\n| 102 | Trading is not allowed during crossing |\n| 102 | Instrument trading is not allowed |\n| 102 | Price precision is\\[PricePrecision\\] |\n| 102 | Quantity precision is\\[QuantityPrecision\\] |\n| 102 | Minimum trade quantity is \\[MinQuantity\\] |\n| 102 | MinQuantity = max( minQuantity,  <br>minQuantityTradeEntry.amount) |\n| 102 | Maximum trade quantity is \\[MaxQuantity\\] |\n| 102 | Quantity increment is \\[quantityIncrement\\] |\n| 102 | Instrument trading is halted |\n| 102 | Price breaches \\[FieldName\\] of \\[FieldValue\\] (NEW v1.56.0) \\[Optional Text\\]  <br>  <br>_(NEW v1.56.0)  <br>_\\[Optional Text\\] = Price Band \\[Value\\]\\[Type\\], Reference Price: \\[RefPrice\\] , returned only in case of dynamic/ static price bands and not in case of leg price bands or instrument min/ max price bands |\n| 102 | Maximum value is \\[maxOrderValue\\] |\n| 102 | Price tick size is \\[tickSize\\] |\n| 102 | Trading is not allowed |\n| 102 | Missing position account |\n| `(NEW v1.56.0)`  <br>113 | Not supported |\n| 10001 | Permission denied |"
+							},
+							"response": [
+								{
+									"id": "54487e26-b3c8-4fcd-9859-901af24289f0",
+									"name": "Success",
+									"originalRequest": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"instrumentId\": \"970\",\n  \"type\": \"Block\",\n  \"price\": \"1234\",\n  \"quantity\": \"0.2\",\n  \"buy\": {\n    \"mpId\": \"2087505369\",\n    \"accountType\": \"Client\",\n    \"parties\": [\n      {\n        \"id\": \"ABC\",\n        \"source\": \"D\",\n        \"role\": \"38\"\n      }\n    ]\n  },\n  \"sell\": {\n    \"mpId\": \"2087505369\",\n    \"accountType\": \"House\",\n    \"parties\": [\n      {\n        \"id\": \"12345\",\n        \"source\": \"D\",\n        \"role\": \"38\"\n      }\n    ]\n  }\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": "{{URL_ORIGIN}}/api/operations/enter-trade"
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Date",
+											"value": "Thu, 10 Nov 2022 07:46:35 GMT"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json; charset=utf-8"
+										},
+										{
+											"key": "Content-Length",
+											"value": "16"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										},
+										{
+											"key": "Access-Control-Allow-Origin",
+											"value": "*"
+										},
+										{
+											"key": "Content-Security-Policy",
+											"value": "default-src 'self';base-uri 'self';block-all-mixed-content;font-src 'self' https: data:;frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src 'self';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests"
+										},
+										{
+											"key": "Etag",
+											"value": "W/\"10-WncborLcgPjzLtpdV8HAqKwTwno\""
+										},
+										{
+											"key": "Expect-Ct",
+											"value": "max-age=0"
+										},
+										{
+											"key": "Referrer-Policy",
+											"value": "no-referrer"
+										},
+										{
+											"key": "Strict-Transport-Security",
+											"value": "max-age=15552000; includeSubDomains"
+										},
+										{
+											"key": "X-Content-Type-Options",
+											"value": "nosniff"
+										},
+										{
+											"key": "X-Dns-Prefetch-Control",
+											"value": "off"
+										},
+										{
+											"key": "X-Download-Options",
+											"value": "noopen"
+										},
+										{
+											"key": "X-Frame-Options",
+											"value": "SAMEORIGIN"
+										},
+										{
+											"key": "X-Permitted-Cross-Domain-Policies",
+											"value": "none"
+										},
+										{
+											"key": "X-Xss-Protection",
+											"value": "0"
+										}
+									],
+									"cookie": [],
+									"responseTime": null,
+									"body": "{\n    \"tradeId\": \"16\"\n}"
+								},
+								{
+									"id": "40e422da-da3f-4837-920d-5547aa161bb4",
+									"name": "Failure",
+									"originalRequest": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"instrumentId\": \"963\",\n  \"type\": \"Block\",\n  \"price\": \"1234\",\n  \"quantity\": \"0.2\",\n  \"buy\": {\n    \"mpId\": \"2087505339\",\n    \"accountType\": \"Client\",\n    \"parties\": [\n      {\n        \"id\": \"ABC\",\n        \"source\": \"D\",\n        \"role\": \"37\"\n      }\n    ]\n  },\n  \"sell\": {\n    \"mpId\": \"2087505348\",\n    \"accountType\": \"House\",\n    \"parties\": [\n      {\n        \"id\": \"12345\",\n        \"source\": \"D\",\n        \"role\": \"38\"\n      }\n    ]\n  }\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": "{{URL_ORIGIN}}/api/operations/enter-trade"
+									},
+									"status": "Internal Server Error",
+									"code": 500,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Date",
+											"value": "Tue, 13 Sep 2022 08:28:03 GMT"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json; charset=utf-8"
+										},
+										{
+											"key": "Content-Length",
+											"value": "49"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										},
+										{
+											"key": "Access-Control-Allow-Origin",
+											"value": "*"
+										},
+										{
+											"key": "Content-Security-Policy",
+											"value": "default-src 'self';base-uri 'self';block-all-mixed-content;font-src 'self' https: data:;frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src 'self';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests"
+										},
+										{
+											"key": "Etag",
+											"value": "W/\"31-lpivlAXrqMaK7CRJPH5z7OIimqQ\""
+										},
+										{
+											"key": "Expect-Ct",
+											"value": "max-age=0"
+										},
+										{
+											"key": "Referrer-Policy",
+											"value": "no-referrer"
+										},
+										{
+											"key": "Strict-Transport-Security",
+											"value": "max-age=15552000; includeSubDomains"
+										},
+										{
+											"key": "X-Content-Type-Options",
+											"value": "nosniff"
+										},
+										{
+											"key": "X-Dns-Prefetch-Control",
+											"value": "off"
+										},
+										{
+											"key": "X-Download-Options",
+											"value": "noopen"
+										},
+										{
+											"key": "X-Frame-Options",
+											"value": "SAMEORIGIN"
+										},
+										{
+											"key": "X-Permitted-Cross-Domain-Policies",
+											"value": "none"
+										},
+										{
+											"key": "X-Xss-Protection",
+											"value": "0"
+										}
+									],
+									"cookie": [],
+									"responseTime": null,
+									"body": "{\n    \"code\": 110,\n    \"message\": \"Missing position account\"\n}"
+								}
+							]
+						},
+						{
+							"name": "Trade Cancellation",
+							"id": "810bfdde-cd44-4547-b214-672fef052cf6",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"instrumentId\": \"1\",\n  \"matchId\": \"5555\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "{{URL_ORIGIN}}/api/operations/cancel-trade",
+								"description": "Trade Cancellation API allows you to cancel a trade\n\n#### Trade Cancellation- Fields\n\n| **Field** | **Type** | **Description** |\n| --- | --- | --- |\n| instrumentId | int String | Instrument ID to cancel the orders |\n| matchId | int String | Trade Id to cancel |\n\n#### Trade Cancellation- Error Codes\n\n| Code | Message |\n| --- | --- |\n| 1 | System is unavailable |\n| 100 | Missing or invalid parameter: \\[FieldName\\] |\n| 101 | \\[FieldName\\] not found |\n| 102 | Currently not allowed |\n| 102 | Instrument trading is not allowed |\n| 105 | Cancelation failed, trade is already canceled or from previous days or is leg trade |\n| 10001 | Permission denied |"
+							},
+							"response": [
+								{
+									"id": "92f9acaa-f314-41ba-af8d-dca28af040e0",
+									"name": "Success",
+									"originalRequest": {
+										"method": "POST",
+										"header": [
+											{
+												"key": "Content-Type",
+												"value": "application/json",
+												"type": "text"
+											}
+										],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"instrumentId\": \"963\",\n  \"matchId\": \"7\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": "{{URL_ORIGIN}}/api/operations/cancel-trade"
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Date",
+											"value": "Tue, 13 Sep 2022 08:29:06 GMT"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json; charset=utf-8"
+										},
+										{
+											"key": "Content-Length",
+											"value": "2"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										},
+										{
+											"key": "Access-Control-Allow-Origin",
+											"value": "*"
+										},
+										{
+											"key": "Content-Security-Policy",
+											"value": "default-src 'self';base-uri 'self';block-all-mixed-content;font-src 'self' https: data:;frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src 'self';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests"
+										},
+										{
+											"key": "Etag",
+											"value": "W/\"2-vyGp6PvFo4RvsFtPoIWeCReyIC8\""
+										},
+										{
+											"key": "Expect-Ct",
+											"value": "max-age=0"
+										},
+										{
+											"key": "Referrer-Policy",
+											"value": "no-referrer"
+										},
+										{
+											"key": "Strict-Transport-Security",
+											"value": "max-age=15552000; includeSubDomains"
+										},
+										{
+											"key": "X-Content-Type-Options",
+											"value": "nosniff"
+										},
+										{
+											"key": "X-Dns-Prefetch-Control",
+											"value": "off"
+										},
+										{
+											"key": "X-Download-Options",
+											"value": "noopen"
+										},
+										{
+											"key": "X-Frame-Options",
+											"value": "SAMEORIGIN"
+										},
+										{
+											"key": "X-Permitted-Cross-Domain-Policies",
+											"value": "none"
+										},
+										{
+											"key": "X-Xss-Protection",
+											"value": "0"
+										}
+									],
+									"cookie": [],
+									"responseTime": null,
+									"body": "{}"
+								},
+								{
+									"id": "fe302500-3edc-4cb4-880f-12c1b29f3605",
+									"name": "Failure",
+									"originalRequest": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"instrumentId\": \"963\",\n  \"matchId\": \"1\"\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": "{{URL_ORIGIN}}/api/operations/cancel-trade"
+									},
+									"status": "Bad Request",
+									"code": 400,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Date",
+											"value": "Tue, 13 Sep 2022 08:28:34 GMT"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json; charset=utf-8"
+										},
+										{
+											"key": "Content-Length",
+											"value": "92"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										},
+										{
+											"key": "Access-Control-Allow-Origin",
+											"value": "*"
+										},
+										{
+											"key": "Content-Security-Policy",
+											"value": "default-src 'self';base-uri 'self';block-all-mixed-content;font-src 'self' https: data:;frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src 'self';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests"
+										},
+										{
+											"key": "Etag",
+											"value": "W/\"5c-aPSnnZIiabCrvpFBRhICdS8RVCs\""
+										},
+										{
+											"key": "Expect-Ct",
+											"value": "max-age=0"
+										},
+										{
+											"key": "Referrer-Policy",
+											"value": "no-referrer"
+										},
+										{
+											"key": "Strict-Transport-Security",
+											"value": "max-age=15552000; includeSubDomains"
+										},
+										{
+											"key": "X-Content-Type-Options",
+											"value": "nosniff"
+										},
+										{
+											"key": "X-Dns-Prefetch-Control",
+											"value": "off"
+										},
+										{
+											"key": "X-Download-Options",
+											"value": "noopen"
+										},
+										{
+											"key": "X-Frame-Options",
+											"value": "SAMEORIGIN"
+										},
+										{
+											"key": "X-Permitted-Cross-Domain-Policies",
+											"value": "none"
+										},
+										{
+											"key": "X-Xss-Protection",
+											"value": "0"
+										}
+									],
+									"cookie": [],
+									"responseTime": null,
+									"body": "{\n    \"code\": 105,\n    \"message\": \"Cancelation failed, trade is already canceled or from previous days\"\n}"
+								}
+							]
+						},
+						{
+							"name": "Trade Adjustment",
+							"id": "4f3103ea-0486-4b1e-a251-92c3384864e1",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n  \"instrumentId\": \"28\",\n  \"tradeId\": \"6\",\n  \"newPrice\": \"115.33\",\n  \"excludedPriceBands\": [\"INSTRUMENT_MIN_MAX\"]\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": "{{URL_ORIGIN}}/api/operations/adjust-trade",
+								"description": "Trade Adjustment allows to change the price of a trade\n\n#### Trade Adjustment- Fields\n\n| **Field** | **Type** | **Description** |\n| --- | --- | --- |\n| instrumentId | Int | Instrument ID to cancel the orders |\n| tradeId | Int | Trade Id |\n| newPrice | Decimal | New price of the trade |\n| excludedPriceBands | \\[ \\] Enum | Optional  <br>Excluded prices from Price Bands.  <br>  <br>Allowed values:  <br>INSTRUMENT_MIN_MAX  <br>DAILY_MIN_MAX  <br>TICK_MIN_MAX |\n\n#### Trade Adjustment- Error Codes\n\n| Code | Message |\n| --- | --- |\n| 1 | System is unavailable |\n| 100 | Missing or invalid parameter: \\[FieldName\\] |\n| 101 | \\[FieldName\\] not found |\n| 102 | Currently not allowed |\n| 102 | Instrument trading is not allowed |\n| 102 | Trading is not allowed during auction call |\n| 102 | Trading is not allowed during crossing |\n| 102 | Price precision is\\[PricePrecision\\] |\n| 102 | Quantity precision is\\[QuantityPrecision\\] |\n| 102 | Instrument trading is halted |\n| 102 | Price breaches \\[FieldName\\] of \\[FieldValue\\] |\n| 102 | Maximum value is \\[maxOrderValue\\] |\n| 102 | Price tick size is \\[tickSize\\] |\n| 102 | Trading is not allowed |\n| 102 | Request failed, strategy leg configuration has changed |\n| 105 | Request failed, trade is already canceled or from previous days or is leg trade |\n| 105 | Implied order trades can’t be adjusted |\n| 111 | Not allowed when LEDGER is enabled |\n| 10001 | Permission denied |"
+							},
+							"response": [
+								{
+									"id": "7e67ba55-1d87-4d2a-b277-2a37fd6b10bd",
+									"name": "Success",
+									"originalRequest": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"instrumentId\": \"28\",\n  \"tradeId\": \"6\",\n  \"newPrice\": \"115.33\",\n  \"excludedPriceBands\": [\"INSTRUMENT_MIN_MAX\"]\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": "{{URL_ORIGIN}}/api/operations/adjust-trade"
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": null,
+									"header": [
+										{
+											"key": "Date",
+											"value": "Mon, 13 Oct 2025 09:36:05 GMT"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json; charset=utf-8"
+										},
+										{
+											"key": "Content-Length",
+											"value": "2"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										},
+										{
+											"key": "Access-Control-Allow-Origin",
+											"value": "*"
+										},
+										{
+											"key": "Content-Security-Policy",
+											"value": "default-src self;base-uri self;connect-src self;object-src none;block-all-mixed-content;upgrade-insecure-requests;script-src self;script-src-attr none;frame-ancestors none"
+										},
+										{
+											"key": "Etag",
+											"value": "W/\"2-vyGp6PvFo4RvsFtPoIWeCReyIC8\""
+										},
+										{
+											"key": "Expect-Ct",
+											"value": "max-age=0"
+										},
+										{
+											"key": "Referrer-Policy",
+											"value": "no-referrer"
+										},
+										{
+											"key": "Strict-Transport-Security",
+											"value": "max-age=15552000; includeSubDomains"
+										},
+										{
+											"key": "X-Content-Type-Options",
+											"value": "nosniff"
+										},
+										{
+											"key": "X-Dns-Prefetch-Control",
+											"value": "off"
+										},
+										{
+											"key": "X-Download-Options",
+											"value": "noopen"
+										},
+										{
+											"key": "X-Frame-Options",
+											"value": "DENY"
+										},
+										{
+											"key": "X-Permitted-Cross-Domain-Policies",
+											"value": "none"
+										},
+										{
+											"key": "X-Xss-Protection",
+											"value": "0"
+										}
+									],
+									"cookie": [],
+									"responseTime": null,
+									"body": "{}"
+								},
+								{
+									"id": "1ce0d4fa-fa48-4360-b907-3e505d362610",
+									"name": "Failure",
+									"originalRequest": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"instrumentId\": \"28\",\n  \"tradeId\": \"6\",\n  \"newPrice\": \"115.33\",\n  \"excludedPriceBands\": [\"INSTRUMENT_MIN_MAX\"]\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": "{{URL_ORIGIN}}/api/operations/adjust-trade"
+									},
+									"status": "Internal Server Error",
+									"code": 500,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Date",
+											"value": "Mon, 13 Oct 2025 09:37:56 GMT"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json",
+											"description": ""
+										},
+										{
+											"key": "Content-Length",
+											"value": "106"
+										},
+										{
+											"key": "Connection",
+											"value": "keep-alive"
+										},
+										{
+											"key": "Access-Control-Allow-Origin",
+											"value": "*"
+										},
+										{
+											"key": "Content-Security-Policy",
+											"value": "default-src self;base-uri self;connect-src self;object-src none;block-all-mixed-content;upgrade-insecure-requests;script-src self;script-src-attr none;frame-ancestors none"
+										},
+										{
+											"key": "Etag",
+											"value": "W/\"6a-LqoRjj++47foGFRfVrKR1pb0OQc\""
+										},
+										{
+											"key": "Expect-Ct",
+											"value": "max-age=0"
+										},
+										{
+											"key": "Referrer-Policy",
+											"value": "no-referrer"
+										},
+										{
+											"key": "Strict-Transport-Security",
+											"value": "max-age=15552000; includeSubDomains"
+										},
+										{
+											"key": "X-Content-Type-Options",
+											"value": "nosniff"
+										},
+										{
+											"key": "X-Dns-Prefetch-Control",
+											"value": "off"
+										},
+										{
+											"key": "X-Download-Options",
+											"value": "noopen"
+										},
+										{
+											"key": "X-Frame-Options",
+											"value": "DENY"
+										},
+										{
+											"key": "X-Permitted-Cross-Domain-Policies",
+											"value": "none"
+										},
+										{
+											"key": "X-Xss-Protection",
+											"value": "0"
+										}
+									],
+									"cookie": [],
+									"responseTime": null,
+									"body": "{\n    \"code\": \"105\",\n    \"message\": \"Request failed, trade is already canceled or from previous days or is leg trade\"\n}"
+								}
+							]
+						}
+					],
+					"id": "b21afb30-18eb-4630-a7e7-3289bbaa09c3"
+				},
+				{
 					"name": "Corporate Actions",
 					"item": [
 						{
@@ -10470,1475 +11939,6 @@
 					"id": "67725130-5513-47a3-8a4b-62771f449d92"
 				},
 				{
-					"name": "Trades Management",
-					"item": [
-						{
-							"name": "Trade Entry",
-							"id": "909a5a9c-3385-43af-9569-ea3168a331e9",
-							"protocolProfileBehavior": {
-								"disableBodyPruning": true
-							},
-							"request": {
-								"method": "POST",
-								"header": [],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n  \"instrumentId\": \"963\",\n  \"type\": \"Block\",\n  \"price\": \"1234\",\n  \"quantity\": \"0.2\",\n  \"buy\": {\n    \"mpId\": \"2087505339\",\n    \"accountType\": \"Client\",\n    \"parties\": [\n      {\n        \"id\": \"ABC\",\n        \"source\": \"D\",\n        \"role\": \"38\"\n      }\n    ]\n  },\n  \"sell\": {\n    \"mpId\": \"2087505348\",\n    \"accountType\": \"House\",\n    \"parties\": [\n      {\n        \"id\": \"12345\",\n        \"source\": \"D\",\n        \"role\": \"38\"\n      }\n    ]\n  }\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": "{{URL_ORIGIN}}/api/operations/enter-trade",
-								"description": "Trade Entry API allows you to capture trade that was done out of the order book\n\n#### Trade Entry- Fields\n\n| **Field** | **Type** | **Description** |\n| --- | --- | --- |\n| instrumentId | Int | Instrument id for the trade |\n| type | eNum | Type of the trade entry  <br>  <br>See the table below for supported values |\n| price | Decimal | Trade price |\n| quantity | Decimal | Trade quantity |\n| buy | Side obj | See below |\n| sell | Side obj | See below |\n\n##### Side obj-\n\n| **Field** | **Type** | **Description** |\n| --- | --- | --- |\n| mpId | Int | mpId |\n| accountType | eNum | Client/House |\n| parties | \\[\\]obj | list of parties obj |\n\n###### parties obj-\n\n| **Field** | **Type** | **Description** |\n| --- | --- | --- |\n| id | string(20) | The Id of the party |\n| source | Char | Id source = D |\n| role | int | Id role = 38 |\n\n##### Supported values for the type field\n\n| Trade Type | Description | **FIX** TrdType(828) |\n| --- | --- | --- |\n| Block | Block trade | 1 |\n| Other | Other | 99 |\n| EFRP | Exchange for Related Position | 2 |\n| ECRP | Exchange of Contracts for Related Positions | 101 |\n| EFP | Exchange for Physical | 102 |\n| `(NEW v1.47.0)` Reversal | Trade Reversal | 103 |\n| Transfer | Transfer | 3 |\n| EFS | Exchange for Swap | 12 |\n| EFR | Exchange for Risk | 11 |\n| EOO | Exchange of Options for Options | 14 |\n| OPNT | Over the Counter Privately Negotiated Trades | 22 |\n| SFF | Substitution of Futures for Forwards | 23 |\n| OptionExercise | Option exercise | 45 |\n| OTCLNOFS | OTC / Large Notional Off Facility Swap | 54 |\n| EBF | Exchange Basis Facility | 55 |\n| Netted | Netted trade | 57 |\n| BlockSwap | Block swap trade | 58 |\n| CreditEvent | Credit event trade | 59 |\n| SuccessionEvent | Succession event trade | 60 |\n\n#### Trade Entry- Error Codes\n\n| Code | Message |\n| --- | --- |\n| 1 | System is unavailable |\n| 100 | Missing or invalid parameter: \\[FieldName\\] |\n| 100 | Trade \\[FieldName\\] must be less than \\[maxLong/10^ fieldPrecision |\n| 100 | Trade \\[FieldName\\] must be above than \\[minLong/10^ fieldPrecision\\] |\n| 101 | \\[FieldName\\] not found |\n| 102 | Currently not allowed |\n| 102 | Trading is not allowed during auction call |\n| 102 | Trading is not allowed during crossing |\n| 102 | Instrument trading is not allowed |\n| 102 | Price precision is\\[PricePrecision\\] |\n| 102 | Quantity precision is\\[QuantityPrecision\\] |\n| 102 | Minimum trade quantity is \\[MinQuantity\\] |\n| 102 | MinQuantity = max( minQuantity,  <br>minQuantityTradeEntry.amount) |\n| 102 | Maximum trade quantity is \\[MaxQuantity\\] |\n| 102 | Quantity increment is \\[quantityIncrement\\] |\n| 102 | Instrument trading is halted |\n| 102 | Price breaches \\[FieldName\\] of \\[FieldValue\\] |\n| 102 | Maximum value is \\[maxOrderValue\\] |\n| 102 | Price tick size is \\[tickSize\\] |\n| 102 | Trading is not allowed |\n| 102 | Missing position account |\n| 10001 | Permission denied |"
-							},
-							"response": [
-								{
-									"id": "54487e26-b3c8-4fcd-9859-901af24289f0",
-									"name": "Success",
-									"originalRequest": {
-										"method": "POST",
-										"header": [],
-										"body": {
-											"mode": "raw",
-											"raw": "{\n  \"instrumentId\": \"970\",\n  \"type\": \"Block\",\n  \"price\": \"1234\",\n  \"quantity\": \"0.2\",\n  \"buy\": {\n    \"mpId\": \"2087505369\",\n    \"accountType\": \"Client\",\n    \"parties\": [\n      {\n        \"id\": \"ABC\",\n        \"source\": \"D\",\n        \"role\": \"38\"\n      }\n    ]\n  },\n  \"sell\": {\n    \"mpId\": \"2087505369\",\n    \"accountType\": \"House\",\n    \"parties\": [\n      {\n        \"id\": \"12345\",\n        \"source\": \"D\",\n        \"role\": \"38\"\n      }\n    ]\n  }\n}",
-											"options": {
-												"raw": {
-													"language": "json"
-												}
-											}
-										},
-										"url": "{{URL_ORIGIN}}/api/operations/enter-trade"
-									},
-									"status": "OK",
-									"code": 200,
-									"_postman_previewlanguage": "json",
-									"header": [
-										{
-											"key": "Date",
-											"value": "Thu, 10 Nov 2022 07:46:35 GMT"
-										},
-										{
-											"key": "Content-Type",
-											"value": "application/json; charset=utf-8"
-										},
-										{
-											"key": "Content-Length",
-											"value": "16"
-										},
-										{
-											"key": "Connection",
-											"value": "keep-alive"
-										},
-										{
-											"key": "Access-Control-Allow-Origin",
-											"value": "*"
-										},
-										{
-											"key": "Content-Security-Policy",
-											"value": "default-src 'self';base-uri 'self';block-all-mixed-content;font-src 'self' https: data:;frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src 'self';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests"
-										},
-										{
-											"key": "Etag",
-											"value": "W/\"10-WncborLcgPjzLtpdV8HAqKwTwno\""
-										},
-										{
-											"key": "Expect-Ct",
-											"value": "max-age=0"
-										},
-										{
-											"key": "Referrer-Policy",
-											"value": "no-referrer"
-										},
-										{
-											"key": "Strict-Transport-Security",
-											"value": "max-age=15552000; includeSubDomains"
-										},
-										{
-											"key": "X-Content-Type-Options",
-											"value": "nosniff"
-										},
-										{
-											"key": "X-Dns-Prefetch-Control",
-											"value": "off"
-										},
-										{
-											"key": "X-Download-Options",
-											"value": "noopen"
-										},
-										{
-											"key": "X-Frame-Options",
-											"value": "SAMEORIGIN"
-										},
-										{
-											"key": "X-Permitted-Cross-Domain-Policies",
-											"value": "none"
-										},
-										{
-											"key": "X-Xss-Protection",
-											"value": "0"
-										}
-									],
-									"cookie": [],
-									"responseTime": null,
-									"body": "{\n    \"tradeId\": \"16\"\n}"
-								},
-								{
-									"id": "40e422da-da3f-4837-920d-5547aa161bb4",
-									"name": "Failure",
-									"originalRequest": {
-										"method": "POST",
-										"header": [],
-										"body": {
-											"mode": "raw",
-											"raw": "{\n  \"instrumentId\": \"963\",\n  \"type\": \"Block\",\n  \"price\": \"1234\",\n  \"quantity\": \"0.2\",\n  \"buy\": {\n    \"mpId\": \"2087505339\",\n    \"accountType\": \"Client\",\n    \"parties\": [\n      {\n        \"id\": \"ABC\",\n        \"source\": \"D\",\n        \"role\": \"37\"\n      }\n    ]\n  },\n  \"sell\": {\n    \"mpId\": \"2087505348\",\n    \"accountType\": \"House\",\n    \"parties\": [\n      {\n        \"id\": \"12345\",\n        \"source\": \"D\",\n        \"role\": \"38\"\n      }\n    ]\n  }\n}",
-											"options": {
-												"raw": {
-													"language": "json"
-												}
-											}
-										},
-										"url": "{{URL_ORIGIN}}/api/operations/enter-trade"
-									},
-									"status": "Internal Server Error",
-									"code": 500,
-									"_postman_previewlanguage": "json",
-									"header": [
-										{
-											"key": "Date",
-											"value": "Tue, 13 Sep 2022 08:28:03 GMT"
-										},
-										{
-											"key": "Content-Type",
-											"value": "application/json; charset=utf-8"
-										},
-										{
-											"key": "Content-Length",
-											"value": "49"
-										},
-										{
-											"key": "Connection",
-											"value": "keep-alive"
-										},
-										{
-											"key": "Access-Control-Allow-Origin",
-											"value": "*"
-										},
-										{
-											"key": "Content-Security-Policy",
-											"value": "default-src 'self';base-uri 'self';block-all-mixed-content;font-src 'self' https: data:;frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src 'self';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests"
-										},
-										{
-											"key": "Etag",
-											"value": "W/\"31-lpivlAXrqMaK7CRJPH5z7OIimqQ\""
-										},
-										{
-											"key": "Expect-Ct",
-											"value": "max-age=0"
-										},
-										{
-											"key": "Referrer-Policy",
-											"value": "no-referrer"
-										},
-										{
-											"key": "Strict-Transport-Security",
-											"value": "max-age=15552000; includeSubDomains"
-										},
-										{
-											"key": "X-Content-Type-Options",
-											"value": "nosniff"
-										},
-										{
-											"key": "X-Dns-Prefetch-Control",
-											"value": "off"
-										},
-										{
-											"key": "X-Download-Options",
-											"value": "noopen"
-										},
-										{
-											"key": "X-Frame-Options",
-											"value": "SAMEORIGIN"
-										},
-										{
-											"key": "X-Permitted-Cross-Domain-Policies",
-											"value": "none"
-										},
-										{
-											"key": "X-Xss-Protection",
-											"value": "0"
-										}
-									],
-									"cookie": [],
-									"responseTime": null,
-									"body": "{\n    \"code\": 110,\n    \"message\": \"Missing position account\"\n}"
-								}
-							]
-						},
-						{
-							"name": "Trade Cancellation",
-							"id": "810bfdde-cd44-4547-b214-672fef052cf6",
-							"protocolProfileBehavior": {
-								"disableBodyPruning": true
-							},
-							"request": {
-								"method": "POST",
-								"header": [],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n  \"instrumentId\": \"1\",\n  \"matchId\": \"5555\"\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": "{{URL_ORIGIN}}/api/operations/cancel-trade",
-								"description": "Trade Cancellation API allows you to cancel a trade\n\n#### Trade Cancellation- Fields\n\n| **Field** | **Type** | **Description** |\n| --- | --- | --- |\n| instrumentId | int String | Instrument ID to cancel the orders |\n| matchId | int String | Trade Id to cancel |\n\n#### Trade Cancellation- Error Codes\n\n| Code | Message |\n| --- | --- |\n| 1 | System is unavailable |\n| 100 | Missing or invalid parameter: \\[FieldName\\] |\n| 101 | \\[FieldName\\] not found |\n| 102 | Currently not allowed |\n| 102 | Instrument trading is not allowed |\n| 105 | Cancelation failed, trade is already canceled or from previous days or is leg trade |\n| 10001 | Permission denied |"
-							},
-							"response": [
-								{
-									"id": "92f9acaa-f314-41ba-af8d-dca28af040e0",
-									"name": "Success",
-									"originalRequest": {
-										"method": "POST",
-										"header": [
-											{
-												"key": "Content-Type",
-												"value": "application/json",
-												"type": "text"
-											}
-										],
-										"body": {
-											"mode": "raw",
-											"raw": "{\n  \"instrumentId\": \"963\",\n  \"matchId\": \"7\"\n}",
-											"options": {
-												"raw": {
-													"language": "json"
-												}
-											}
-										},
-										"url": "{{URL_ORIGIN}}/api/operations/cancel-trade"
-									},
-									"status": "OK",
-									"code": 200,
-									"_postman_previewlanguage": "json",
-									"header": [
-										{
-											"key": "Date",
-											"value": "Tue, 13 Sep 2022 08:29:06 GMT"
-										},
-										{
-											"key": "Content-Type",
-											"value": "application/json; charset=utf-8"
-										},
-										{
-											"key": "Content-Length",
-											"value": "2"
-										},
-										{
-											"key": "Connection",
-											"value": "keep-alive"
-										},
-										{
-											"key": "Access-Control-Allow-Origin",
-											"value": "*"
-										},
-										{
-											"key": "Content-Security-Policy",
-											"value": "default-src 'self';base-uri 'self';block-all-mixed-content;font-src 'self' https: data:;frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src 'self';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests"
-										},
-										{
-											"key": "Etag",
-											"value": "W/\"2-vyGp6PvFo4RvsFtPoIWeCReyIC8\""
-										},
-										{
-											"key": "Expect-Ct",
-											"value": "max-age=0"
-										},
-										{
-											"key": "Referrer-Policy",
-											"value": "no-referrer"
-										},
-										{
-											"key": "Strict-Transport-Security",
-											"value": "max-age=15552000; includeSubDomains"
-										},
-										{
-											"key": "X-Content-Type-Options",
-											"value": "nosniff"
-										},
-										{
-											"key": "X-Dns-Prefetch-Control",
-											"value": "off"
-										},
-										{
-											"key": "X-Download-Options",
-											"value": "noopen"
-										},
-										{
-											"key": "X-Frame-Options",
-											"value": "SAMEORIGIN"
-										},
-										{
-											"key": "X-Permitted-Cross-Domain-Policies",
-											"value": "none"
-										},
-										{
-											"key": "X-Xss-Protection",
-											"value": "0"
-										}
-									],
-									"cookie": [],
-									"responseTime": null,
-									"body": "{}"
-								},
-								{
-									"id": "fe302500-3edc-4cb4-880f-12c1b29f3605",
-									"name": "Failure",
-									"originalRequest": {
-										"method": "POST",
-										"header": [],
-										"body": {
-											"mode": "raw",
-											"raw": "{\n  \"instrumentId\": \"963\",\n  \"matchId\": \"1\"\n}",
-											"options": {
-												"raw": {
-													"language": "json"
-												}
-											}
-										},
-										"url": "{{URL_ORIGIN}}/api/operations/cancel-trade"
-									},
-									"status": "Bad Request",
-									"code": 400,
-									"_postman_previewlanguage": "json",
-									"header": [
-										{
-											"key": "Date",
-											"value": "Tue, 13 Sep 2022 08:28:34 GMT"
-										},
-										{
-											"key": "Content-Type",
-											"value": "application/json; charset=utf-8"
-										},
-										{
-											"key": "Content-Length",
-											"value": "92"
-										},
-										{
-											"key": "Connection",
-											"value": "keep-alive"
-										},
-										{
-											"key": "Access-Control-Allow-Origin",
-											"value": "*"
-										},
-										{
-											"key": "Content-Security-Policy",
-											"value": "default-src 'self';base-uri 'self';block-all-mixed-content;font-src 'self' https: data:;frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src 'self';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests"
-										},
-										{
-											"key": "Etag",
-											"value": "W/\"5c-aPSnnZIiabCrvpFBRhICdS8RVCs\""
-										},
-										{
-											"key": "Expect-Ct",
-											"value": "max-age=0"
-										},
-										{
-											"key": "Referrer-Policy",
-											"value": "no-referrer"
-										},
-										{
-											"key": "Strict-Transport-Security",
-											"value": "max-age=15552000; includeSubDomains"
-										},
-										{
-											"key": "X-Content-Type-Options",
-											"value": "nosniff"
-										},
-										{
-											"key": "X-Dns-Prefetch-Control",
-											"value": "off"
-										},
-										{
-											"key": "X-Download-Options",
-											"value": "noopen"
-										},
-										{
-											"key": "X-Frame-Options",
-											"value": "SAMEORIGIN"
-										},
-										{
-											"key": "X-Permitted-Cross-Domain-Policies",
-											"value": "none"
-										},
-										{
-											"key": "X-Xss-Protection",
-											"value": "0"
-										}
-									],
-									"cookie": [],
-									"responseTime": null,
-									"body": "{\n    \"code\": 105,\n    \"message\": \"Cancelation failed, trade is already canceled or from previous days\"\n}"
-								}
-							]
-						},
-						{
-							"name": "Trade Adjustment",
-							"id": "4f3103ea-0486-4b1e-a251-92c3384864e1",
-							"protocolProfileBehavior": {
-								"disableBodyPruning": true
-							},
-							"request": {
-								"method": "POST",
-								"header": [],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n  \"instrumentId\": \"28\",\n  \"tradeId\": \"6\",\n  \"newPrice\": \"115.33\",\n  \"excludedPriceBands\": [\"INSTRUMENT_MIN_MAX\"]\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": "{{URL_ORIGIN}}/api/operations/adjust-trade",
-								"description": "Trade Adjustment allows to change the price of a trade\n\n#### Trade Adjustment- Fields\n\n| **Field** | **Type** | **Description** |\n| --- | --- | --- |\n| instrumentId | Int | Instrument ID to cancel the orders |\n| tradeId | Int | Trade Id |\n| newPrice | Decimal | New price of the trade |\n| excludedPriceBands | \\[ \\] Enum | Optional  <br>Excluded prices from Price Bands.  <br>  <br>Allowed values:  <br>INSTRUMENT_MIN_MAX  <br>DAILY_MIN_MAX  <br>TICK_MIN_MAX |\n\n#### Trade Adjustment- Error Codes\n\n| Code | Message |\n| --- | --- |\n| 1 | System is unavailable |\n| 100 | Missing or invalid parameter: \\[FieldName\\] |\n| 101 | \\[FieldName\\] not found |\n| 102 | Currently not allowed |\n| 102 | Instrument trading is not allowed |\n| 102 | Trading is not allowed during auction call |\n| 102 | Trading is not allowed during crossing |\n| 102 | Price precision is\\[PricePrecision\\] |\n| 102 | Quantity precision is\\[QuantityPrecision\\] |\n| 102 | Instrument trading is halted |\n| 102 | Price breaches \\[FieldName\\] of \\[FieldValue\\] |\n| 102 | Maximum value is \\[maxOrderValue\\] |\n| 102 | Price tick size is \\[tickSize\\] |\n| 102 | Trading is not allowed |\n| 102 | Request failed, strategy leg configuration has changed |\n| 105 | Request failed, trade is already canceled or from previous days or is leg trade |\n| 105 | Implied order trades can’t be adjusted |\n| 111 | Not allowed when LEDGER is enabled |\n| 10001 | Permission denied |"
-							},
-							"response": [
-								{
-									"id": "7e67ba55-1d87-4d2a-b277-2a37fd6b10bd",
-									"name": "Success",
-									"originalRequest": {
-										"method": "POST",
-										"header": [],
-										"body": {
-											"mode": "raw",
-											"raw": "{\n  \"instrumentId\": \"28\",\n  \"tradeId\": \"6\",\n  \"newPrice\": \"115.33\",\n  \"excludedPriceBands\": [\"INSTRUMENT_MIN_MAX\"]\n}",
-											"options": {
-												"raw": {
-													"language": "json"
-												}
-											}
-										},
-										"url": "{{URL_ORIGIN}}/api/operations/adjust-trade"
-									},
-									"status": "OK",
-									"code": 200,
-									"_postman_previewlanguage": null,
-									"header": [
-										{
-											"key": "Date",
-											"value": "Mon, 13 Oct 2025 09:36:05 GMT"
-										},
-										{
-											"key": "Content-Type",
-											"value": "application/json; charset=utf-8"
-										},
-										{
-											"key": "Content-Length",
-											"value": "2"
-										},
-										{
-											"key": "Connection",
-											"value": "keep-alive"
-										},
-										{
-											"key": "Access-Control-Allow-Origin",
-											"value": "*"
-										},
-										{
-											"key": "Content-Security-Policy",
-											"value": "default-src self;base-uri self;connect-src self;object-src none;block-all-mixed-content;upgrade-insecure-requests;script-src self;script-src-attr none;frame-ancestors none"
-										},
-										{
-											"key": "Etag",
-											"value": "W/\"2-vyGp6PvFo4RvsFtPoIWeCReyIC8\""
-										},
-										{
-											"key": "Expect-Ct",
-											"value": "max-age=0"
-										},
-										{
-											"key": "Referrer-Policy",
-											"value": "no-referrer"
-										},
-										{
-											"key": "Strict-Transport-Security",
-											"value": "max-age=15552000; includeSubDomains"
-										},
-										{
-											"key": "X-Content-Type-Options",
-											"value": "nosniff"
-										},
-										{
-											"key": "X-Dns-Prefetch-Control",
-											"value": "off"
-										},
-										{
-											"key": "X-Download-Options",
-											"value": "noopen"
-										},
-										{
-											"key": "X-Frame-Options",
-											"value": "DENY"
-										},
-										{
-											"key": "X-Permitted-Cross-Domain-Policies",
-											"value": "none"
-										},
-										{
-											"key": "X-Xss-Protection",
-											"value": "0"
-										}
-									],
-									"cookie": [],
-									"responseTime": null,
-									"body": "{}"
-								},
-								{
-									"id": "1ce0d4fa-fa48-4360-b907-3e505d362610",
-									"name": "Failure",
-									"originalRequest": {
-										"method": "POST",
-										"header": [],
-										"body": {
-											"mode": "raw",
-											"raw": "{\n  \"instrumentId\": \"28\",\n  \"tradeId\": \"6\",\n  \"newPrice\": \"115.33\",\n  \"excludedPriceBands\": [\"INSTRUMENT_MIN_MAX\"]\n}",
-											"options": {
-												"raw": {
-													"language": "json"
-												}
-											}
-										},
-										"url": "{{URL_ORIGIN}}/api/operations/adjust-trade"
-									},
-									"status": "Internal Server Error",
-									"code": 500,
-									"_postman_previewlanguage": "json",
-									"header": [
-										{
-											"key": "Date",
-											"value": "Mon, 13 Oct 2025 09:37:56 GMT"
-										},
-										{
-											"key": "Content-Type",
-											"value": "application/json",
-											"description": ""
-										},
-										{
-											"key": "Content-Length",
-											"value": "106"
-										},
-										{
-											"key": "Connection",
-											"value": "keep-alive"
-										},
-										{
-											"key": "Access-Control-Allow-Origin",
-											"value": "*"
-										},
-										{
-											"key": "Content-Security-Policy",
-											"value": "default-src self;base-uri self;connect-src self;object-src none;block-all-mixed-content;upgrade-insecure-requests;script-src self;script-src-attr none;frame-ancestors none"
-										},
-										{
-											"key": "Etag",
-											"value": "W/\"6a-LqoRjj++47foGFRfVrKR1pb0OQc\""
-										},
-										{
-											"key": "Expect-Ct",
-											"value": "max-age=0"
-										},
-										{
-											"key": "Referrer-Policy",
-											"value": "no-referrer"
-										},
-										{
-											"key": "Strict-Transport-Security",
-											"value": "max-age=15552000; includeSubDomains"
-										},
-										{
-											"key": "X-Content-Type-Options",
-											"value": "nosniff"
-										},
-										{
-											"key": "X-Dns-Prefetch-Control",
-											"value": "off"
-										},
-										{
-											"key": "X-Download-Options",
-											"value": "noopen"
-										},
-										{
-											"key": "X-Frame-Options",
-											"value": "DENY"
-										},
-										{
-											"key": "X-Permitted-Cross-Domain-Policies",
-											"value": "none"
-										},
-										{
-											"key": "X-Xss-Protection",
-											"value": "0"
-										}
-									],
-									"cookie": [],
-									"responseTime": null,
-									"body": "{\n    \"code\": \"105\",\n    \"message\": \"Request failed, trade is already canceled or from previous days or is leg trade\"\n}"
-								}
-							]
-						}
-					],
-					"id": "b21afb30-18eb-4630-a7e7-3289bbaa09c3"
-				},
-				{
-					"name": "Orders Management",
-					"item": [
-						{
-							"name": "Place Order",
-							"id": "88f2de2d-1ffa-4b03-8ac4-1b46f9e605bd",
-							"protocolProfileBehavior": {
-								"disableBodyPruning": true
-							},
-							"request": {
-								"method": "POST",
-								"header": [],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n    \"mpId\": \"11\",\n    \"orderType\": \"Limit\",\n    \"side\": \"Buy\",\n    \"quantity\": \"1.3\",\n    \"price\": \"100.33\",\n    \"instrumentId\": \"123\",\n    \"mpOrderId\": 998,\n    \"timeInForce\": \"GTC\",\n    \"accountType\": \"House\",\n    \"parties\": [\n      {\n        \"id\": \"veryCoolStringId\",\n        \"source\": \"D\",\n        \"role\": \"12\"\n      },\n      {\n        \"id\": \"user123\",\n        \"source\": \"D\",\n        \"role\": \"13\"\n      }\n    ]   \n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": "{{URL_ORIGIN}}/api/operations/place-order",
-								"description": "Place Order API allows you to place an order for mp\n\nFor more details about place order - see [here](https://docs.exberry.io/ws/trading-api#placeorder)\n\n#### Place order- Fields\n\n| **Field** | **Type** | **Description** |\n| --- | --- | --- |\n| instrumentId | Int String | Instrument id for the order |\n| mpId | Int String | mpId |\n| mpOrderId | Long | Similar to the [trading API](https://docs.exberry.io/ws/trading-api#placeorder) |\n| orderType | Enum | Similar to the [trading API](https://docs.exberry.io/ws/trading-api#placeorder) |\n| side | Enum | Similar to the [trading API](https://docs.exberry.io/ws/trading-api#placeorder) |\n| quantity | Decimal String | Similar to the [trading API](https://docs.exberry.io/ws/trading-api#placeorder) |\n| price `optional` | Decimal String | Similar to the [trading API](https://docs.exberry.io/ws/trading-api#placeorder) |\n| timeInForce `optional` | Enum | Similar to the [trading API](https://docs.exberry.io/ws/trading-api#placeorder) |\n| expiryDate `optional` | UTC Time[](https://docs.exberry.io/ws/trading-api#placeorder) | Similar to the [trading API](https://docs.exberry.io/ws/trading-api#placeorder) |\n| expiryDay `optional` | String | Similar to the [trading API](https://docs.exberry.io/ws/trading-api#placeorder) |\n| minQuantity `optional` | Decimal String | Similar to the [trading API](https://docs.exberry.io/ws/trading-api#placeorder) |\n| stopPrice `optional` | Decimal String | Similar to the [trading API](https://docs.exberry.io/ws/trading-api#placeorder) |\n| stpAction `optional` | Enum | Similar to the [trading API](https://docs.exberry.io/ws/trading-api#placeorder) |\n| accountType `optional` | Enum | Similar to the [trading API](https://docs.exberry.io/ws/trading-api#placeorder) |\n| parties `optional` | \\[\\] Object | Similar to the [trading API](https://docs.exberry.io/ws/trading-api#placeorder) |\n| displayMethod `optional` | Enum | Similar to the [trading API](https://docs.exberry.io/ws/trading-api#placeorder) |\n| displayQuantity `optional` | Decimal String | Similar to the [trading API](https://docs.exberry.io/ws/trading-api#placeorder) |\n| displayLowQuantity `optional` | Decimal String | Similar to the [trading API](https://docs.exberry.io/ws/trading-api#placeorder) |\n| displayHighQuantity `optional` | Decimal String | Similar to the [trading API](https://docs.exberry.io/ws/trading-api#placeorder) |\n| `(NEW v1.50.0)`  <br>metadata `optional` | String | Similar to the [trading API](https://docs.exberry.io/ws/trading-api#placeorder) |\n\n#### Place Order - Error Codes\n\n1. Validations: same as [place order](https://docs.google.com/document/d/1N_7UEglP8s6hNV9ZeE5MN2NWdpJw-phRbo8Pk3qW2Go/edit#bookmark=id.gsv875ykqvln), with the below changes:\n    \n    1. Skip validations 1007 & 1008 & 1011 (Authentication related)\n        \n2. Additional validation:\n    \n\n| Code | Message |\n| --- | --- |\n| 100 | Missing or invalid parameter: \\[FieldName\\] |\n| 10001 | Permission denied |"
-							},
-							"response": [
-								{
-									"id": "79dba794-4e19-4943-9b92-de029d9f79fd",
-									"name": "Success",
-									"originalRequest": {
-										"method": "POST",
-										"header": [],
-										"body": {
-											"mode": "raw",
-											"raw": "{\n    \"mpId\": \"15\",\n    \"orderType\": \"Limit\",\n    \"side\": \"Buy\",\n    \"quantity\": \"1.3\",\n    \"price\": \"100.33\",\n    \"instrumentId\": \"239\",\n    \"mpOrderId\": \"9999\",\n    \"timeInForce\": \"GTC\",\n    \"accountType\": \"House\",\n    \"parties\": [\n      {\n        \"id\": \"veryCoolStringId\",\n        \"source\": \"D\",\n        \"role\": \"12\"\n      },\n      {\n        \"id\": \"user123\",\n        \"source\": \"D\",\n        \"role\": \"13\"\n      }\n    ]   \n}",
-											"options": {
-												"raw": {
-													"language": "json"
-												}
-											}
-										},
-										"url": "{{URL_ORIGIN}}/api/operations/place-order"
-									},
-									"status": "OK",
-									"code": 200,
-									"_postman_previewlanguage": "json",
-									"header": [
-										{
-											"key": "Date",
-											"value": "Sun, 31 Mar 2024 07:04:11 GMT"
-										},
-										{
-											"key": "Content-Type",
-											"value": "application/json; charset=utf-8"
-										},
-										{
-											"key": "Content-Length",
-											"value": "40"
-										},
-										{
-											"key": "Connection",
-											"value": "keep-alive"
-										},
-										{
-											"key": "Access-Control-Allow-Origin",
-											"value": "*"
-										},
-										{
-											"key": "Content-Security-Policy",
-											"value": "default-src self;base-uri self;connect-src self;object-src none;block-all-mixed-content;upgrade-insecure-requests;script-src self;script-src-attr none"
-										},
-										{
-											"key": "Etag",
-											"value": "W/\"28-iTiQJdQgmusqiq6zDgjzL2Zt2HY\""
-										},
-										{
-											"key": "Expect-Ct",
-											"value": "max-age=0"
-										},
-										{
-											"key": "Referrer-Policy",
-											"value": "no-referrer"
-										},
-										{
-											"key": "Strict-Transport-Security",
-											"value": "max-age=15552000; includeSubDomains"
-										},
-										{
-											"key": "X-Content-Type-Options",
-											"value": "nosniff"
-										},
-										{
-											"key": "X-Dns-Prefetch-Control",
-											"value": "off"
-										},
-										{
-											"key": "X-Download-Options",
-											"value": "noopen"
-										},
-										{
-											"key": "X-Frame-Options",
-											"value": "SAMEORIGIN"
-										},
-										{
-											"key": "X-Permitted-Cross-Domain-Policies",
-											"value": "none"
-										},
-										{
-											"key": "X-Xss-Protection",
-											"value": "0"
-										}
-									],
-									"cookie": [],
-									"responseTime": null,
-									"body": "{\n    \"orderId\": \"71\",\n    \"orderStatus\": \"Pending\"\n}"
-								},
-								{
-									"id": "2a07a1f0-7c8c-476f-8bbb-853474f3e34d",
-									"name": "Failure",
-									"originalRequest": {
-										"method": "POST",
-										"header": [],
-										"body": {
-											"mode": "raw",
-											"raw": "{\n    \"mpId\": \"30\",\n    \"orderType\": \"Limit\",\n    \"side\": \"Buy\",\n    \"quantity\": \"1.3\",\n    \"price\": \"100.33\",\n    \"instrumentId\": \"123\",\n    \"mpOrderId\": \"1005\",\n    \"timeInForce\": \"GTC\",\n    \"accountType\": \"House\",\n    \"parties\": [\n      {\n        \"id\": \"veryCoolStringId\",\n        \"source\": \"D\",\n        \"role\": \"12\"\n      },\n      {\n        \"id\": \"user123\",\n        \"source\": \"D\",\n        \"role\": \"13\"\n      }\n    ]   \n}",
-											"options": {
-												"raw": {
-													"language": "json"
-												}
-											}
-										},
-										"url": "{{URL_ORIGIN}}/api/operations/place-order"
-									},
-									"status": "Internal Server Error",
-									"code": 500,
-									"_postman_previewlanguage": "json",
-									"header": [
-										{
-											"key": "Date",
-											"value": "Sun, 31 Mar 2024 07:02:53 GMT"
-										},
-										{
-											"key": "Content-Type",
-											"value": "application/json; charset=utf-8"
-										},
-										{
-											"key": "Content-Length",
-											"value": "47"
-										},
-										{
-											"key": "Connection",
-											"value": "keep-alive"
-										},
-										{
-											"key": "Access-Control-Allow-Origin",
-											"value": "*"
-										},
-										{
-											"key": "Content-Security-Policy",
-											"value": "default-src self;base-uri self;connect-src self;object-src none;block-all-mixed-content;upgrade-insecure-requests;script-src self;script-src-attr none"
-										},
-										{
-											"key": "Etag",
-											"value": "W/\"2f-DYn3DgNH9R+2QXxcwxFF+tmEU/A\""
-										},
-										{
-											"key": "Expect-Ct",
-											"value": "max-age=0"
-										},
-										{
-											"key": "Referrer-Policy",
-											"value": "no-referrer"
-										},
-										{
-											"key": "Strict-Transport-Security",
-											"value": "max-age=15552000; includeSubDomains"
-										},
-										{
-											"key": "X-Content-Type-Options",
-											"value": "nosniff"
-										},
-										{
-											"key": "X-Dns-Prefetch-Control",
-											"value": "off"
-										},
-										{
-											"key": "X-Download-Options",
-											"value": "noopen"
-										},
-										{
-											"key": "X-Frame-Options",
-											"value": "SAMEORIGIN"
-										},
-										{
-											"key": "X-Permitted-Cross-Domain-Policies",
-											"value": "none"
-										},
-										{
-											"key": "X-Xss-Protection",
-											"value": "0"
-										}
-									],
-									"cookie": [],
-									"responseTime": null,
-									"body": "{\n    \"code\": \"101\",\n    \"message\": \"Instrument not found\"\n}"
-								}
-							]
-						},
-						{
-							"name": "Cancel Order",
-							"id": "851b1fad-b6c4-4615-9cc9-5c824a59294b",
-							"protocolProfileBehavior": {
-								"disableBodyPruning": true
-							},
-							"request": {
-								"method": "POST",
-								"header": [],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n\"instrumentId\": \"123\",\n\"orderId\": \"1\"\n}\n",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": "{{URL_ORIGIN}}/api/operations/cancel-order",
-								"description": "Cancel Order API allows you to cancel order\n\n#### Cancel order - Fields\n\n| **Field** | **Type** | **Description** |\n| --- | --- | --- |\n| instrumentId | Int | Instrument id for the trade |\n| orderId | Int | the Id of the order we want to cancel |\n| `(NEW 1.32.0)`  <br>cancelReason | Enum | Optional  <br>Cancellation reason. (populated in the cancellation events)  <br>  <br>Allowed values:  <br>CancelOrderOnBehalf(default if nothing is sent)  <br>CancelRequest  <br>CorporateAction |\n\n#### Cancel Order - Error Codes\n\n| Code | Message |\n| --- | --- |\n| 1 | System is unavailable |\n| 100 | Missing or invalid parameter: \\[FieldName\\] |\n| 101 | \\[FieldName\\] not found |\n| 102 | Trading is not allowed during crossing |\n| 102 | Instrument trading is not allowed |\n| 102 | Market is closed |\n| 102 | Instrument trading is halt |\n| 101 | Not allowed |\n| `(NEW 1.37.0)`  <br>108 | Cancellation of implied order is not allowed |\n| 10001 | Permission denied |"
-							},
-							"response": [
-								{
-									"id": "b7c6ea04-eeaa-454c-89af-53ca80cbdcf0",
-									"name": "Success",
-									"originalRequest": {
-										"method": "POST",
-										"header": [],
-										"body": {
-											"mode": "raw",
-											"raw": "{\n\"instrumentId\": \"239\",\n\"orderId\": \"60\"\n}\n",
-											"options": {
-												"raw": {
-													"language": "json"
-												}
-											}
-										},
-										"url": "{{URL_ORIGIN}}/api/operations/cancel-order"
-									},
-									"status": "OK",
-									"code": 200,
-									"_postman_previewlanguage": "json",
-									"header": [
-										{
-											"key": "Date",
-											"value": "Tue, 20 Feb 2024 14:16:26 GMT"
-										},
-										{
-											"key": "Content-Type",
-											"value": "application/json; charset=utf-8"
-										},
-										{
-											"key": "Content-Length",
-											"value": "0"
-										},
-										{
-											"key": "Connection",
-											"value": "keep-alive"
-										},
-										{
-											"key": "Access-Control-Allow-Origin",
-											"value": "*"
-										},
-										{
-											"key": "Content-Security-Policy",
-											"value": "default-src 'self';base-uri 'self';font-src 'self' https: data:;form-action 'self';frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src 'self';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests"
-										},
-										{
-											"key": "Cross-Origin-Opener-Policy",
-											"value": "same-origin"
-										},
-										{
-											"key": "Cross-Origin-Resource-Policy",
-											"value": "same-origin"
-										},
-										{
-											"key": "Origin-Agent-Cluster",
-											"value": "?1"
-										},
-										{
-											"key": "Referrer-Policy",
-											"value": "no-referrer"
-										},
-										{
-											"key": "Strict-Transport-Security",
-											"value": "max-age=15552000; includeSubDomains"
-										},
-										{
-											"key": "X-Content-Type-Options",
-											"value": "nosniff"
-										},
-										{
-											"key": "X-Dns-Prefetch-Control",
-											"value": "off"
-										},
-										{
-											"key": "X-Download-Options",
-											"value": "noopen"
-										},
-										{
-											"key": "X-Frame-Options",
-											"value": "SAMEORIGIN"
-										},
-										{
-											"key": "X-Permitted-Cross-Domain-Policies",
-											"value": "none"
-										},
-										{
-											"key": "X-Xss-Protection",
-											"value": "0"
-										}
-									],
-									"cookie": [],
-									"responseTime": null,
-									"body": null
-								},
-								{
-									"id": "bf326934-61ba-431e-bf96-aab60b876691",
-									"name": "Failure",
-									"originalRequest": {
-										"method": "POST",
-										"header": [],
-										"body": {
-											"mode": "raw",
-											"raw": "{\n\"instrumentId\": \"1\",\n\"matchId\": \"99\"\n}\n",
-											"options": {
-												"raw": {
-													"language": "json"
-												}
-											}
-										},
-										"url": "{{URL_ORIGIN}}/api/operations/cancel-order"
-									},
-									"status": "Internal Server Error",
-									"code": 500,
-									"_postman_previewlanguage": "json",
-									"header": [
-										{
-											"key": "Date",
-											"value": "Thu, 07 Mar 2024 08:56:51 GMT"
-										},
-										{
-											"key": "Content-Type",
-											"value": "application/json; charset=utf-8"
-										},
-										{
-											"key": "Content-Length",
-											"value": "47"
-										},
-										{
-											"key": "Connection",
-											"value": "keep-alive"
-										},
-										{
-											"key": "Access-Control-Allow-Origin",
-											"value": "*"
-										},
-										{
-											"key": "Content-Security-Policy",
-											"value": "default-src 'self';base-uri 'self';block-all-mixed-content;font-src 'self' https: data:;frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src 'self';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests"
-										},
-										{
-											"key": "Etag",
-											"value": "W/\"2f-DYn3DgNH9R+2QXxcwxFF+tmEU/A\""
-										},
-										{
-											"key": "Expect-Ct",
-											"value": "max-age=0"
-										},
-										{
-											"key": "Referrer-Policy",
-											"value": "no-referrer"
-										},
-										{
-											"key": "Strict-Transport-Security",
-											"value": "max-age=15552000; includeSubDomains"
-										},
-										{
-											"key": "X-Content-Type-Options",
-											"value": "nosniff"
-										},
-										{
-											"key": "X-Dns-Prefetch-Control",
-											"value": "off"
-										},
-										{
-											"key": "X-Download-Options",
-											"value": "noopen"
-										},
-										{
-											"key": "X-Frame-Options",
-											"value": "SAMEORIGIN"
-										},
-										{
-											"key": "X-Permitted-Cross-Domain-Policies",
-											"value": "none"
-										},
-										{
-											"key": "X-Xss-Protection",
-											"value": "0"
-										}
-									],
-									"cookie": [],
-									"responseTime": null,
-									"body": "{\n    \"code\": \"101\",\n    \"message\": \"Instrument not found\"\n}"
-								}
-							]
-						},
-						{
-							"name": "Replace Order",
-							"id": "ddc62818-9307-459b-bbca-4a5b27ffeaef",
-							"protocolProfileBehavior": {
-								"disableBodyPruning": true
-							},
-							"request": {
-								"method": "POST",
-								"header": [],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n    \"orderId\": \"71\",\n    \"instrumentId\": \"123\",\n    \"quantity\": \"10\",\n    \"price\": \"1\",\n    \"timeInForce\": \"GTC\" \n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": "{{URL_ORIGIN}}/api/operations/replace-order",
-								"description": "Replace Order API allows you to replace an order for mp.\n\nFor more details about replace order - see [here](https://docs.exberry.io/ws/trading-api#replaceorder)\n\n#### Replace order- Fields\n\n| **Field** | **Type** | **Description** |\n| --- | --- | --- |\n| instrumentId | Int String | Original order instrument Id |\n| orderId | Int String | Exchange order ID to be replaced |\n| quantity | Decimal String | Similar to the [trading API](https://docs.exberry.io/ws/trading-api#replaceorder) |\n| price `optional` | Decimal String | Similar to the [trading API](https://docs.exberry.io/ws/trading-api#replaceorder) |\n| timeInForce `optional` | Enum | Simialar to the [trading API](https://docs.exberry.io/ws/trading-api#replaceorder) |\n| expiryDate `optional` | UTC Time | Similar to the [trading API](https://docs.exberry.io/ws/trading-api#replaceorder) |\n| expiryDay `optional` | String | Similar to the [trading API](https://docs.exberry.io/ws/trading-api#replaceorder) |\n| minQuantity `optional` | Decimal String | Similar to the [trading API](https://docs.exberry.io/ws/trading-api#replaceorder) |\n| stopPrice `optional` | Decimal String | Similar to the [trading API](https://docs.exberry.io/ws/trading-api#replaceorder) |\n| stpAction `optional` | Enum | Similar to the [trading API](https://docs.exberry.io/ws/trading-api#replaceorder) |\n| displayQuantity `optional` | Decimal String | Simialar to the [trading API](https://docs.exberry.io/ws/trading-api#replaceorder) |\n| displayLowQuantity `optional` | Decimal String | Simialar to the [trading API](https://docs.exberry.io/ws/trading-api#replaceorder) |\n| displayHighQuantity `optional` | Decimal String | Simialar to the [trading API](https://docs.exberry.io/ws/trading-api#replaceorder) |\n\n#### Relace Order - Error Codes\n\n1. Validations: same as [replaceOrder](https://docs.exberry.io/ws/trading-api#replaceorder), with the below changes:\n    \n    1. Skip validations 1007 & 1008 &1011 (Authentication related)\n        \n2. Additional validations:\n    \n\n| Code | Message |\n| --- | --- |\n| 10001 | Permission denied |\n| 108 | Changes to the implied orders are not allowed |"
-							},
-							"response": [
-								{
-									"id": "ba180b76-dcd6-4b95-974d-1afdd555f485",
-									"name": "Success",
-									"originalRequest": {
-										"method": "POST",
-										"header": [],
-										"body": {
-											"mode": "raw",
-											"raw": "{\n    \"orderId\": \"71\",\n    \"instrumentId\": \"123\",\n    \"quantity\": \"10\",\n    \"price\": \"1\",\n    \"timeInForce\": \"GTC\" \n}",
-											"options": {
-												"raw": {
-													"language": "json"
-												}
-											}
-										},
-										"url": "{{URL_ORIGIN}}/api/operations/replace-order"
-									},
-									"status": "OK",
-									"code": 200,
-									"_postman_previewlanguage": "json",
-									"header": [
-										{
-											"key": "Date",
-											"value": "Sun, 31 Mar 2024 08:01:11 GMT"
-										},
-										{
-											"key": "Content-Type",
-											"value": "application/json; charset=utf-8"
-										},
-										{
-											"key": "Content-Length",
-											"value": "42"
-										},
-										{
-											"key": "Connection",
-											"value": "keep-alive"
-										},
-										{
-											"key": "Access-Control-Allow-Origin",
-											"value": "*"
-										},
-										{
-											"key": "Content-Security-Policy",
-											"value": "default-src self;base-uri self;connect-src self;object-src none;block-all-mixed-content;upgrade-insecure-requests;script-src self;script-src-attr none"
-										},
-										{
-											"key": "Etag",
-											"value": "W/\"2a-psCwrpD2GreUDMPjp0zplHn6jcc\""
-										},
-										{
-											"key": "Expect-Ct",
-											"value": "max-age=0"
-										},
-										{
-											"key": "Referrer-Policy",
-											"value": "no-referrer"
-										},
-										{
-											"key": "Strict-Transport-Security",
-											"value": "max-age=15552000; includeSubDomains"
-										},
-										{
-											"key": "X-Content-Type-Options",
-											"value": "nosniff"
-										},
-										{
-											"key": "X-Dns-Prefetch-Control",
-											"value": "off"
-										},
-										{
-											"key": "X-Download-Options",
-											"value": "noopen"
-										},
-										{
-											"key": "X-Frame-Options",
-											"value": "SAMEORIGIN"
-										},
-										{
-											"key": "X-Permitted-Cross-Domain-Policies",
-											"value": "none"
-										},
-										{
-											"key": "X-Xss-Protection",
-											"value": "0"
-										}
-									],
-									"cookie": [],
-									"responseTime": null,
-									"body": "{\n    \"orderId\": \"71\",\n    \"originalOrderId\": \"71\",\n    \"newOrderId\": \"71\"\n}"
-								},
-								{
-									"id": "3ea3eeb1-1946-4f9e-a2b7-4e5576c73b38",
-									"name": "Failure",
-									"originalRequest": {
-										"method": "POST",
-										"header": [],
-										"body": {
-											"mode": "raw",
-											"raw": "{\n    \"orderId\": \"71\",\n    \"instrument\": \"AMZ\",\n    \"quantity\": \"10\",\n    \"price\": \"1\",\n    \"timeInForce\": \"GTC\" \n}",
-											"options": {
-												"raw": {
-													"language": "json"
-												}
-											}
-										},
-										"url": "{{URL_ORIGIN}}/api/operations/replace-order"
-									},
-									"status": "Internal Server Error",
-									"code": 500,
-									"_postman_previewlanguage": "json",
-									"header": [
-										{
-											"key": "Date",
-											"value": "Sun, 31 Mar 2024 08:00:43 GMT"
-										},
-										{
-											"key": "Content-Type",
-											"value": "application/json; charset=utf-8"
-										},
-										{
-											"key": "Content-Length",
-											"value": "69"
-										},
-										{
-											"key": "Connection",
-											"value": "keep-alive"
-										},
-										{
-											"key": "Access-Control-Allow-Origin",
-											"value": "*"
-										},
-										{
-											"key": "Content-Security-Policy",
-											"value": "default-src self;base-uri self;connect-src self;object-src none;block-all-mixed-content;upgrade-insecure-requests;script-src self;script-src-attr none"
-										},
-										{
-											"key": "Etag",
-											"value": "W/\"45-HhSSBddz/f8ikDSlzg66+DQ2AE0\""
-										},
-										{
-											"key": "Expect-Ct",
-											"value": "max-age=0"
-										},
-										{
-											"key": "Referrer-Policy",
-											"value": "no-referrer"
-										},
-										{
-											"key": "Strict-Transport-Security",
-											"value": "max-age=15552000; includeSubDomains"
-										},
-										{
-											"key": "X-Content-Type-Options",
-											"value": "nosniff"
-										},
-										{
-											"key": "X-Dns-Prefetch-Control",
-											"value": "off"
-										},
-										{
-											"key": "X-Download-Options",
-											"value": "noopen"
-										},
-										{
-											"key": "X-Frame-Options",
-											"value": "SAMEORIGIN"
-										},
-										{
-											"key": "X-Permitted-Cross-Domain-Policies",
-											"value": "none"
-										},
-										{
-											"key": "X-Xss-Protection",
-											"value": "0"
-										}
-									],
-									"cookie": [],
-									"responseTime": null,
-									"body": "{\n    \"code\": \"100\",\n    \"message\": \"Missing or invalid parameter: instrumentId\"\n}"
-								}
-							]
-						},
-						{
-							"name": "Mass Cancel",
-							"id": "18f744b9-350d-4b9c-9c6a-cc6920fb8f29",
-							"protocolProfileBehavior": {
-								"disableBodyPruning": true
-							},
-							"request": {
-								"method": "POST",
-								"header": [
-									{
-										"key": "",
-										"value": "",
-										"disabled": true
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n    \"targetScope\": \"Instrument\",\n    \"instrumentId\": \"239\",\n    \"targetEntities\": [\n        \"Order\",\n        \"RFQ\"\n    ],\n    \"mpId\": \"15\",\n    \"targetParties\": [\n        {\n            \"id\": \"53\",\n            \"source\": \"M\",\n            \"role\": 1001\n        }\n    ]\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": "{{URL_ORIGIN}}/api/operations/mass-cancel",
-								"description": "Mass Cancel API allows you to mass cancel pending activity per request criteria:\n\nRequest Parameters\n\n| **Field** | **Type** | **Description** |\n| --- | --- | --- |\n| instrumentId | Stringfied number | Instrument ID to mass cancel the orders |\n| `Removed v1.30.0`  <br>~~comment~~ | ~~String~~ | ~~Free text comment~~ |\n| mpId | Stringfied number | `Optional`  <br>MP ID to mass cancel the target entities  <br>Not sending this parameter will mass cancel for all MPs |\n| targetParties | \\[\\]TargetParty objects | `Optional`  <br>  <br>targetParties to target the mass cancel orders.  <br>If multiple targetParty objects are in a request, the system cancels orders with all targetParties.  <br>For example:  <br>Order1 has party1  <br>Order2 has party1 and party2  <br>Order3 has party1, party2 and party3  <br>Order4 has no parties  <br>A mass cancel request with targetParties(party1 and party2) will cancel order 2 and 3.  <br>  <br>`CHANGED v1.46.0` Note: For accounts: id=accountId, ~~source=D, role=1001~~ source=P, role=24 |\n| `(NEW 1.30.0)` targetEntities | \\[\\] Enum | `Optional`  <br>  <br>The system cancels the type of active entities mentioned in the request.  <br>  <br>Array of below values:  <br>Order - cancels all orders  <br>RFQ - cancels all RFQs and all active quotes belong to them  <br>Quote - cancels all Quotes  <br>`(NEW v1.31.0)` AllegedTrade - cancels all Alleged Trades  <br>  <br>If not exist, system considers as targetEntities = \\[‘Order’\\] |\n| `(NEW 1.31.0)` targetScope | Enum | The field specifies the scope the mass cancel request applies to  <br>  <br>Allowed values:  <br>Instrument - cancel scope is a single instrument  <br>All - cancel scope is all instruments  <br>  <br>If not sent “Instrument” is considered. |\n| `(NEW 1.32.0)`  <br>cancelReason | Enum | Optional  <br>Cancellation reason. (populated in the cancellation events)  <br>  <br>Allowed values:  <br>MassCancelOnBehalf (default if nothing is sent)  <br>MassCancelRequest  <br>CorporateAction |\n\n##### NEW **TargetParty specification:**\n\n| **Field** | **Type** | **Description** |\n| --- | --- | --- |\n| id | string | TargetParty id |\n| source | char | TargetParty source |\n| role | int | TargetParty role |\n\n#### Mass Cancel- Error Codes\n\n| Code | Message |\n| --- | --- |\n| 2001 | Wrong action |\n| 2001 | Wrong instrumentIds |\n| 2401 | Wrong instrumentId: \\[instrumentId\\] |\n| 403 | Permission denied |"
-							},
-							"response": [
-								{
-									"id": "019e6add-49c6-4064-ad74-2666777d7682",
-									"name": "Success",
-									"originalRequest": {
-										"method": "POST",
-										"header": [
-											{
-												"key": "",
-												"value": "",
-												"disabled": true
-											}
-										],
-										"body": {
-											"mode": "raw",
-											"raw": "{\n \"instrumentId\": \"12141\",\n \"mpId\": \"2087505416\"\n}",
-											"options": {
-												"raw": {
-													"language": "json"
-												}
-											}
-										},
-										"url": "{{URL_ORIGIN}}/api/operations/mass-cancel"
-									},
-									"status": "OK",
-									"code": 200,
-									"_postman_previewlanguage": "json",
-									"header": [
-										{
-											"key": "Date",
-											"value": "Wed, 08 Feb 2023 10:48:35 GMT"
-										},
-										{
-											"key": "Content-Type",
-											"value": "application/json; charset=utf-8"
-										},
-										{
-											"key": "Content-Length",
-											"value": "22"
-										},
-										{
-											"key": "Connection",
-											"value": "keep-alive"
-										},
-										{
-											"key": "Access-Control-Allow-Origin",
-											"value": "*"
-										},
-										{
-											"key": "Content-Security-Policy",
-											"value": "default-src 'self';base-uri 'self';block-all-mixed-content;font-src 'self' https: data:;frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src 'self';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests"
-										},
-										{
-											"key": "Etag",
-											"value": "W/\"16-yG0f7a9pASCFmeUXjEVFhzKmHXc\""
-										},
-										{
-											"key": "Expect-Ct",
-											"value": "max-age=0"
-										},
-										{
-											"key": "Referrer-Policy",
-											"value": "no-referrer"
-										},
-										{
-											"key": "Strict-Transport-Security",
-											"value": "max-age=15552000; includeSubDomains"
-										},
-										{
-											"key": "X-Content-Type-Options",
-											"value": "nosniff"
-										},
-										{
-											"key": "X-Dns-Prefetch-Control",
-											"value": "off"
-										},
-										{
-											"key": "X-Download-Options",
-											"value": "noopen"
-										},
-										{
-											"key": "X-Frame-Options",
-											"value": "SAMEORIGIN"
-										},
-										{
-											"key": "X-Permitted-Cross-Domain-Policies",
-											"value": "none"
-										},
-										{
-											"key": "X-Xss-Protection",
-											"value": "0"
-										}
-									],
-									"cookie": [],
-									"responseTime": null,
-									"body": "{\n    \"numberOfOrders\": \"9\",\n    \"numberOfRfqs\": 7\n}"
-								},
-								{
-									"id": "0163fba3-063f-474b-8fb0-428a914162f5",
-									"name": "Faliure",
-									"originalRequest": {
-										"method": "POST",
-										"header": [
-											{
-												"key": "",
-												"value": "",
-												"disabled": true
-											}
-										],
-										"body": {
-											"mode": "raw",
-											"raw": "{\n \"instrumentId\": \"1234\",\n \"mpId\": \"2087505416\"\n}",
-											"options": {
-												"raw": {
-													"language": "json"
-												}
-											}
-										},
-										"url": "{{URL_ORIGIN}}/api/operations/mass-cancel"
-									},
-									"status": "Bad Request",
-									"code": 400,
-									"_postman_previewlanguage": "json",
-									"header": [
-										{
-											"key": "Date",
-											"value": "Sun, 12 Feb 2023 12:50:43 GMT"
-										},
-										{
-											"key": "Content-Type",
-											"value": "application/json; charset=utf-8"
-										},
-										{
-											"key": "Content-Length",
-											"value": "37"
-										},
-										{
-											"key": "Connection",
-											"value": "keep-alive"
-										},
-										{
-											"key": "Access-Control-Allow-Origin",
-											"value": "*"
-										},
-										{
-											"key": "Content-Security-Policy",
-											"value": "default-src 'self';base-uri 'self';block-all-mixed-content;font-src 'self' https: data:;frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src 'self';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests"
-										},
-										{
-											"key": "Etag",
-											"value": "W/\"25-930+wpOoC7JXFiCONDtAcR0XrL4\""
-										},
-										{
-											"key": "Expect-Ct",
-											"value": "max-age=0"
-										},
-										{
-											"key": "Referrer-Policy",
-											"value": "no-referrer"
-										},
-										{
-											"key": "Strict-Transport-Security",
-											"value": "max-age=15552000; includeSubDomains"
-										},
-										{
-											"key": "X-Content-Type-Options",
-											"value": "nosniff"
-										},
-										{
-											"key": "X-Dns-Prefetch-Control",
-											"value": "off"
-										},
-										{
-											"key": "X-Download-Options",
-											"value": "noopen"
-										},
-										{
-											"key": "X-Frame-Options",
-											"value": "SAMEORIGIN"
-										},
-										{
-											"key": "X-Permitted-Cross-Domain-Policies",
-											"value": "none"
-										},
-										{
-											"key": "X-Xss-Protection",
-											"value": "0"
-										}
-									],
-									"cookie": [],
-									"responseTime": null,
-									"body": "{\n    \"code\": 101,\n    \"message\": \"id not found\"\n}"
-								}
-							]
-						}
-					],
-					"id": "d9b6f6ec-a50a-4147-9d63-dafe8d830a85"
-				},
-				{
 					"name": "Set Settlement Price",
 					"id": "77e58088-73f7-4e4b-83c6-3ee563b47990",
 					"protocolProfileBehavior": {
@@ -13223,7 +13223,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n   \"isd\":456,\n    \"messagse\":\"Sample message\"\n}",
+							"raw": "{\n   \"id\":456,\n    \"message\":\"Sample message\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
