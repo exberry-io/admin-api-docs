@@ -3076,53 +3076,6 @@
 							"body": "{\n    \"id\": \"36491073\",\n    \"tradingDays\": [\n        \"MONDAY\",\n        \"TUESDAY\",\n        \"WEDNESDAY\",\n        \"THURSDAY\",\n        \"FRIDAY\",\n        \"SATURDAY\",\n        \"SUNDAY\"\n    ],\n    \"name\": \"Test3\",\n    \"timeZone\": \"-02:00\",\n    \"marketOpen\": \"09:00\",\n    \"marketClose\": \"17:00\",\n    \"holidays\": [\n        {\n            \"date\": \"2022-01-01\",\n            \"name\": \"New Year\"\n        },\n        {\n            \"date\": \"2022-01-02\",\n            \"closeTime\": \"13:00\",\n            \"name\": \"Nice Holiday\"\n        }\n    ]\n}"
 						},
 						{
-							"id": "5fb23556-00cb-4517-885f-e9d6c1a40745",
-							"name": "Failure",
-							"originalRequest": {
-								"method": "GET",
-								"header": [],
-								"url": {
-									"raw": "{{URL_ORIGIN}}/api/v2/calendars/:id",
-									"host": [
-										"{{URL_ORIGIN}}"
-									],
-									"path": [
-										"api",
-										"v2",
-										"calendars",
-										":id"
-									],
-									"variable": [
-										{
-											"key": "id",
-											"value": "33",
-											"description": "Calendar ID"
-										}
-									]
-								}
-							},
-							"status": "Internal Server Error",
-							"code": 500,
-							"_postman_previewlanguage": null,
-							"header": [
-								{
-									"key": ":status",
-									"value": 500
-								},
-								{
-									"key": "date",
-									"value": "Tue, 23 Jun 2026 10:53:06 GMT"
-								},
-								{
-									"key": "content-length",
-									"value": "43"
-								}
-							],
-							"cookie": [],
-							"responseTime": null,
-							"body": "{\"code\":101,\"message\":\"Calendar not found\"}"
-						},
-						{
 							"id": "f6b8d516-9df9-4285-9237-4993bf1e1cad",
 							"name": "Success with auctions",
 							"originalRequest": {
@@ -3203,6 +3156,53 @@
 							"cookie": [],
 							"responseTime": null,
 							"body": "{\n    \"id\": \"5\",\n    \"name\": \"Calendar\",\n    \"timeZone\": \"+03:00\",\n    \"marketOpen\": \"09:00\",\n    \"marketClose\": \"19:00\",\n    \"tradingDays\": [\n        \"MONDAY\",\n        \"TUESDAY\",\n        \"WEDNESDAY\",\n        \"THURSDAY\",\n        \"FRIDAY\",\n        \"SATURDAY\",\n        \"SUNDAY\"\n    ],\n    \"holidays\": [],\n    \"auctions\": [\n        {\n            \"days\": [],\n            \"startTimes\": [],\n            \"duration\": \"120000\",\n            \"matchingAlgorithm\": \"PRICE_AND_TIME\",\n            \"allowedTimeInForces\": [\n                \"GTC\",\n                \"GTD\",\n                \"GAA\"\n            ],\n            \"eventsModes\": [\n                \"LIT\"\n            ],\n            \"trigger\": \"Resume\",\n            \"overrideReferencePrice\": false\n        },\n        {\n            \"days\": [\n                \"SUNDAY\"\n            ],\n            \"startTimes\": [\n                \"17:00:00\"\n            ],\n            \"duration\": \"120000\",\n            \"matchingAlgorithm\": \"EQUILIBRIUM_PRICE\",\n            \"allowedTimeInForces\": [\n                \"GTC\",\n                \"GTD\",\n                \"GAA\"\n            ],\n            \"eventsModes\": [\n                \"LIT\"\n            ],\n            \"trigger\": \"TimeBased\",\n            \"overrideReferencePrice\": true\n        },\n        {\n                    \"days\": [],\n                    \"startTimes\": [],\n                    \"duration\": \"120000\",\n                    \"matchingAlgorithm\": \"EQUILIBRIUM_PRICE_2\",\n                    \"allowedTimeInForces\": [\n                        \"GTC\",\n                        \"GTD\",\n                        \"GAA\",\n                        \"DAY\"\n                    ],\n                    \"eventsModes\": [\n                        \"LIT\",\n                        \"INDICATIVE_PRICE\"\n                    ],\n                    \"indicativePriceFrequency\": \"100\",\n                    \"trigger\": \"Resume\",\n                    \"overrideReferencePrice\": false,\n                    \"extensions\": [\n                        {\n                            \"criticalPhase\": \"60000\",\n                            \"timeFrom\": \"60000\",\n                            \"timeTo\": \"60000\"\n                        },\n                        {\n                            \"criticalPhase\": \"60000\",\n                            \"timeFrom\": \"30000\",\n                            \"timeTo\": \"30000\"\n                        },\n                        {\n                            \"criticalPhase\": \"10000\",\n                            \"timeFrom\": \"50000\",\n                            \"timeTo\": \"60000\"\n                        }\n                    ]\n        }\n    ]\n}"
+						},
+						{
+							"id": "5fb23556-00cb-4517-885f-e9d6c1a40745",
+							"name": "Failure",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{URL_ORIGIN}}/api/v2/calendars/:id",
+									"host": [
+										"{{URL_ORIGIN}}"
+									],
+									"path": [
+										"api",
+										"v2",
+										"calendars",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": "33",
+											"description": "Calendar ID"
+										}
+									]
+								}
+							},
+							"status": "Internal Server Error",
+							"code": 500,
+							"_postman_previewlanguage": null,
+							"header": [
+								{
+									"key": ":status",
+									"value": 500
+								},
+								{
+									"key": "date",
+									"value": "Tue, 23 Jun 2026 10:53:06 GMT"
+								},
+								{
+									"key": "content-length",
+									"value": "43"
+								}
+							],
+							"cookie": [],
+							"responseTime": null,
+							"body": "{\"code\":101,\"message\":\"Calendar not found\"}"
 						}
 					]
 				},
@@ -10271,7 +10271,7 @@
 												}
 											}
 										},
-										"url": "{{URL_ORIGIN}}/api/operations/apply-cash-distribution"
+										"url": "{{URL_ORIGIN}}/api/operations/corporate-actions/apply-cash-distribution"
 									},
 									"status": "OK",
 									"code": 200,
@@ -10367,7 +10367,7 @@
 												}
 											}
 										},
-										"url": "{{URL_ORIGIN}}/api/operations/apply-cash-distribution"
+										"url": "{{URL_ORIGIN}}/api/operations/corporate-actions/apply-cash-distribution"
 									},
 									"status": "Internal Server Error",
 									"code": 500,
@@ -10493,7 +10493,7 @@
 												}
 											}
 										},
-										"url": "{{URL_ORIGIN}}/api/operations/apply-security-distribution"
+										"url": "{{URL_ORIGIN}}/api/operations/corporate-actions/apply-security-distribution"
 									},
 									"status": "OK",
 									"code": 200,
@@ -10589,7 +10589,7 @@
 												}
 											}
 										},
-										"url": "{{URL_ORIGIN}}/api/operations/apply-security-distribution"
+										"url": "{{URL_ORIGIN}}/api/operations/corporate-actions/apply-security-distribution"
 									},
 									"status": "Internal Server Error",
 									"code": 500,
