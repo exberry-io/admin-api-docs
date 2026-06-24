@@ -7731,10 +7731,9 @@
 							],
 							"variable": [
 								{
-									"id": "ff3bdfe8-793d-401f-a0bf-31540152951e",
 									"key": "id",
-									"value": "",
-									"description": "Calendar ID"
+									"value": "3",
+									"description": "CBR Id"
 								}
 							]
 						},
@@ -8549,10 +8548,9 @@
 							],
 							"variable": [
 								{
-									"id": "60648711-ff92-45fe-892f-3040286692fa",
 									"key": "id",
 									"value": "",
-									"description": "Calendar ID"
+									"description": "Tick Size Id"
 								}
 							]
 						},
